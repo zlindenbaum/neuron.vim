@@ -59,7 +59,7 @@ func Insert(thing)
 endf
 
 func ShrinkFZF(output)
-	call Insert(split(a:output, g:zexte)[0])
+	call Insert('<'.split(a:output, g:zexte)[0].'>')
 endf
 
 func ZettelSearchInsert()
