@@ -1,5 +1,5 @@
 " =============================================================================
-" File:        vim-neuron.vim
+" File:        neuron.vim
 " Description: Take zettelkasten notes using neuron in Vim.
 " Author:      ihsan <ihsanl at pm dot me>
 " Created At:  1590326456
@@ -101,3 +101,5 @@ nm <LocalLeader>zo :call ZettelOpenUnderCursor()<cr>
 nm <LocalLeader>zu :call ZettelOpenLast()<cr>
 
 " }}}
+
+" : vim: set fdm=marker :

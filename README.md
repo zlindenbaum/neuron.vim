@@ -1,5 +1,7 @@
 # neuron.vim
 
+![usage](https://lh3.googleusercontent.com/pw/ACtC-3evhU2zPQuPzn69rEyiWqDKQvcGaXL_1pIPlOMzZU3SFsIG4BdsaPuUtUsEoTYnhrNmXH33T0_oRPEyV4-PEBGHJlPFrukb-NSbBzgGnUxzezlUpnAIPkGxB0bVXLe0v44CZPrXR1njIy12uUcqEns8=w1768-h994-no)
+
 Manage your Zettelkasten with the help of
 [neuron](https://github.com/srid/neuron) in {n}vim.
 
