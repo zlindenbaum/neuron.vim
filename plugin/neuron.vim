@@ -33,55 +33,55 @@ let g:fzf_options = '-d"title: " --with-nth 2 --prompt "Zettelkasten: "'
 " }}}
 " Functions {{{1
 
-func ExpandZettelID(ZettelID)
+func! ExpandZettelID(ZettelID)
 	return g:zkdir . a:ZettelID . g:zexte
 endf
 
-func ZettelOpen(ZettelID)
+func! ZettelOpen(ZettelID)
 	exec 'edit '.ExpandZettelID(a:ZettelID)
 endf
 
-func ZettelSearch() "opens the zettel after search.
+func! ZettelSearch() "opens the zettel after search.
 	call fzf#vim#grep("rg 'title:' --column", 1,
 			\ fzf#vim#with_preview({'dir':g:zkdir, 'options': g:fzf_options}))
 endf
 
-func ZettelOpenUnderCursor()
+func! ZettelOpenUnderCursor()
 	call ZettelOpen(expand('<cword>'))
 endf
 
-func ZettelNew() " relying on https://github.com/srid/neuron
+func! ZettelNew() " relying on https://github.com/srid/neuron
 	exec 'e '.system('neuron new "PLACEHOLDER"').' |norm jfP"_D'
 endf
 
-func Insert(thing)
+func! Insert(thing)
 	put =a:thing
 endf
 
-func ShrinkFZF(output)
+func! ShrinkFZF(output)
 	call Insert('<'.split(a:output, g:zexte)[0].'>')
 endf
 
-func ZettelSearchInsert()
+func! ZettelSearchInsert()
 	call fzf#vim#grep("rg 'title:' --column", 1,
 			\ fzf#vim#with_preview({
 				\ 'dir':g:zkdir, 'sink': 'ShrinkFZF ', 'options': g:fzf_options
 			\ }))
 endf
 
-func LastModifiedFile(dir, extension)
+func! LastModifiedFile(dir, extension)
 	return system('ls -t '.a:dir.'*'.a:extension.' | head -1')
 endf
 
-func ZettelLast()
+func! ZettelLast()
 	return LastModifiedFile(g:zkdir, g:zexte)
 endf
 
-func ZettelLastInsert()
+func! ZettelLastInsert()
 	call Insert('<'.fnamemodify(ZettelLast(), ':t:r').'>')
 endf
 
-func ZettelOpenLast()
+func! ZettelOpenLast()
 	exec 'e '.ZettelLast()
 endf
 
