@@ -1,0 +1,36 @@
+*neuron.vim.txt* Manage your Zettelkasten.
+
+Author: ihsan <https://ihsanturk.dev/>
+
+INTRODUCTION                                    *neuron.vim*
+
+neuron.vim manages your zettelkasten. You can search, create and open your
+zettels using fzf, ripgrep and neuron under the hood.
+
+CONFIGURATION                                   *neuron.vim-configuration*
+
+g:zkdir                 Zettelkasten directory.
+                        Default: >
+                        ${HOME}/zettelkasten
+
+g:fzf_options           All fzf commands are uses these options. For example
+                        you can change the prompt 
+                        Default: >
+
+      let g:fzf_options = '-d"title: " --with-nth 2 --prompt "Zettelkasten: "'
+
+MAPPINGS                                        *neuron.vim-mappings*
+
+>
+             nm <m-z>           :call ZettelSearch()<cr>
+             nm <LocalLeader>zn :call ZettelNew()<cr>
+             nm <LocalLeader>zi :call ZettelSearchInsert()<cr>
+             nm <LocalLeader>zl :call ZettelLastInsert()<cr>
+             nm <LocalLeader>zo :call ZettelOpenUnderCursor()<cr>
+             nm <LocalLeader>zu :call ZettelOpenLast()<cr>
+
+ABOUT                                           *neuron.vim-about*
+
+http://github.com/ihsanturk/neuron.vim
+
+vim:tw=78:et:ft=help:norl:
