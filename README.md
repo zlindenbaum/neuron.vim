@@ -1,9 +1,8 @@
 # neuron.vim
+Manage your [Zettelkasten](https://neuron.zettel.page/2011401.html) with the
+help of [neuron](https://github.com/srid/neuron) in {n}vim.
 
-![usage](https://lh3.googleusercontent.com/pw/ACtC-3evhU2zPQuPzn69rEyiWqDKQvcGaXL_1pIPlOMzZU3SFsIG4BdsaPuUtUsEoTYnhrNmXH33T0_oRPEyV4-PEBGHJlPFrukb-NSbBzgGnUxzezlUpnAIPkGxB0bVXLe0v44CZPrXR1njIy12uUcqEns8=w1768-h994-no)
-
-Manage your Zettelkasten with the help of
-[neuron](https://github.com/srid/neuron) in {n}vim.
+![usage-photo](https://lh3.googleusercontent.com/pw/ACtC-3evhU2zPQuPzn69rEyiWqDKQvcGaXL_1pIPlOMzZU3SFsIG4BdsaPuUtUsEoTYnhrNmXH33T0_oRPEyV4-PEBGHJlPFrukb-NSbBzgGnUxzezlUpnAIPkGxB0bVXLe0v44CZPrXR1njIy12uUcqEns8=w1768-h994-no)
 
 ## Requirements
 - [neuron](https://github.com/srid/neuron)
@@ -12,15 +11,10 @@ Manage your Zettelkasten with the help of
 
 ## Installation
 ### Using [vim-plug](https://github.com/junegunn/vim-plug)
-
-add following to your ~/.vimrc
-
-requirements:
 ```vim
 Plug 'junegunn/fzf.vim'
 Plug 'BurntSushi/ripgrep'
 ```
-actual plugin:
 ```vim
 Plug 'ihsanturk/neuron.vim'
 ```
