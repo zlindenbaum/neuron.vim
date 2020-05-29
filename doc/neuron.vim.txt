@@ -8,14 +8,14 @@ neuron.vim manages your zettelkasten. You can search, create and open your
 zettels using fzf, ripgrep and neuron under the hood.
 
 CONFIGURATION                                   *neuron.vim-configuration*
+g:zexte                 Zettel file extension. Default: >
+                        .md
 
-g:zkdir                 Zettelkasten directory.
-                        Default: >
+g:zkdir                 Zettelkasten directory. Default: >
                         ${HOME}/zettelkasten
 
 g:fzf_options           All fzf commands are uses these options. For example
-                        you can change the prompt 
-                        Default: >
+                        you can change the prompt Default: >
 
       let g:fzf_options = '-d"title: " --with-nth 2 --prompt "Zettelkasten: "'
 
