@@ -12,6 +12,11 @@ let g:fzf_options = get(g:, 'fzf_options', '-d"title: " --with-nth 2 --prompt "Z
 
 " Functions {{{1
 
+func! GetTitleOfZettel(ZettelID)
+	let l:second_line = readfile(ExpandZettelID(a:ZettelID))[1]
+	return split(l:second_line, 'title: ')[0]
+endf
+
 func! ExpandZettelID(ZettelID)
 	return g:zkdir . a:ZettelID . g:zexte
 endf
@@ -78,6 +83,27 @@ nm <LocalLeader>zi :call ZettelSearchInsert()<cr>
 nm <LocalLeader>zl :call ZettelLastInsert()<cr>
 nm <LocalLeader>zo :call ZettelOpenUnderCursor()<cr>
 nm <LocalLeader>zu :call ZettelOpenLast()<cr>
+
+" }}}
+" Virtual Titles {{{1
+
+func! AddVirtualTitles()
+	call nvim_buf_clear_namespace(0, 0, 0, line('$'))
+	let l:lnum = 0
+	for line in readfile(expand("%:p"))
+		let l:line_with_zettel_id = matchlist(line, '<\([0-9a-z]\{8}\)>')
+		if(!empty(l:line_with_zettel_id))
+			let l:zettel_id = l:line_with_zettel_id[1]
+			let l:title = GetTitleOfZettel(l:zettel_id)
+			call nvim_buf_set_virtual_text(0,0, l:lnum, [[l:title, 'Comment']],{})
+		endif
+		let l:lnum += 1
+	endfor
+endf
+
+aug neuron
+	exec ':au! BufWinEnter '.g:zkdir.'*'.g:zexte.' call AddVirtualTitles()'
+aug END
 
 " }}}
 
