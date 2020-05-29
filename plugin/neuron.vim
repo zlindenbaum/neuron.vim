@@ -6,31 +6,10 @@
 " License:     MIT License
 " =============================================================================
 
-let g:zkdir = '${HOME}/zettelkasten/'
-let g:zexte = '.md'
-let g:fzf_options = '-d"title: " --with-nth 2 --prompt "Zettelkasten: "'
+let g:zkdir = get(g:, 'zkdir', $HOME.'/zettelkasten/')
+let g:zexte = get(g:, 'zexte', '.md')
+let g:fzf_options = get(g:, 'fzf_options', '-d"title: " --with-nth 2 --prompt "Zettelkasten: "')
 
-" Prototypes {{{1
-
-" Functions {{{2
-
-" [ ] ZettelSearch -> Opens selected.
-" [X] ZettelLastInsert -> Insert last edited.
-" [X] ZettelSearchInsert -> Insert selected.
-" [X] ZettelNew -> Open & startinsert title.
-" [X] ZettelSearchTitles -> Opens selected.
-" [X] ZettelOpen(zettelID)
-" [X] ZettelOpenUnderCursor
-
-" }}}
-" Commands {{{2
-
-" ZettelOpenUnderCursor
-" ZettelOpen
-
-" }}}
-
-" }}}
 " Functions {{{1
 
 func! ExpandZettelID(ZettelID)
