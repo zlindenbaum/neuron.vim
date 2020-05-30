@@ -88,6 +88,9 @@ nm <LocalLeader>zu :call ZettelOpenLast()<cr>
 " Virtual Titles {{{1
 
 func! AddVirtualTitles()
+	if !exists('*nvim_buf_set_virtual_text')
+		return
+	endif
 	call nvim_buf_clear_namespace(0, 0, 0, line('$'))
 	let l:lnum = 0
 	for line in readfile(expand("%:p"))
