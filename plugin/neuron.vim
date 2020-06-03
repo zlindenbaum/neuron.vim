@@ -6,10 +6,29 @@
 " License:     MIT License
 " =============================================================================
 
+" TODO @1591217335: Run neuron rib
+"                   let job_id = jobstart('neuron rib -wS', {'detach':1})
+
+" TODO @1591217503: Stop when leaving buffer
+"                   jobstop(job_id)
+
+" TODO @1591217616: Mappings should be non-destructive check
+"                   https://github.com/reedes/vim-wheel how he uses mappings
+"                   with <Plug>function shape.
+
+" Configuration {{{1
+
 let g:zkdir = get(g:, 'zkdir', $HOME.'/zettelkasten/')
 let g:zexte = get(g:, 'zexte', '.md')
 let g:fzf_options = get(g:, 'fzf_options', '-d"title: " --with-nth 2 --prompt "Zettelkasten: "')
+let g:style_virtual_title = get(g:, 'style_virtual_title', 'Comment')
 
+" }}}
+" Variables {{{1
+
+let g:re_neuron_link = '<\([0-9a-z]\{8}\)>'
+
+" }}}
 " Functions {{{1
 
 func! GetTitleOfZettel(ZettelID)
@@ -94,11 +113,12 @@ func! AddVirtualTitles()
 	call nvim_buf_clear_namespace(0, 0, 0, line('$'))
 	let l:lnum = 0
 	for line in readfile(expand("%:p"))
-		let l:line_with_zettel_id = matchlist(line, '<\([0-9a-z]\{8}\)>')
+		let l:line_with_zettel_id = matchlist(line, g:re_neuron_link)
 		if(!empty(l:line_with_zettel_id))
 			let l:zettel_id = l:line_with_zettel_id[1]
 			let l:title = GetTitleOfZettel(l:zettel_id)
-			call nvim_buf_set_virtual_text(0,0, l:lnum, [[l:title, 'Comment']],{})
+			call nvim_buf_set_virtual_text(0,0,
+						\ l:lnum, [[l:title, g:style_virtual_title]],{})
 		endif
 		let l:lnum += 1
 	endfor
