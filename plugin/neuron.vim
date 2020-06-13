@@ -29,7 +29,25 @@ let g:style_virtual_title = get(g:, 'style_virtual_title', 'Comment')
 let s:re_neuron_link = '<\([0-9a-z]\{8}\)>'
 
 " }}}
-" Functions {{{1
+" Util Functions {{{1
+
+func! IsCurrentBufZettel()
+	if expand('%:p') =~ g:zkdir.'.*'.g:zexte
+		return v:true
+	else
+		return v:false
+	end
+endf
+
+func! GetPlatform() abort
+	if has('win32') || has('win64')
+		return 'win'
+	elseif has('mac') || has('macvim')
+		return 'macos'
+	else
+		return 'linux'
+	endif
+endf
 
 func! GetTitleOfZettel(ZettelID)
 	let l:second_line = readfile(ExpandZettelID(a:ZettelID))[1]
