@@ -26,7 +26,7 @@ let g:style_virtual_title = get(g:, 'style_virtual_title', 'Comment')
 " }}}
 " Variables {{{1
 
-let g:re_neuron_link = '<\([0-9a-z]\{8}\)>'
+let s:re_neuron_link = '<\([0-9a-z]\{8}\)>'
 
 " }}}
 " Functions {{{1
@@ -113,7 +113,7 @@ func! AddVirtualTitles()
 	call nvim_buf_clear_namespace(0, 0, 0, line('$'))
 	let l:lnum = 0
 	for line in readfile(expand("%:p"))
-		let l:line_with_zettel_id = matchlist(line, g:re_neuron_link)
+		let l:line_with_zettel_id = matchlist(line, s:re_neuron_link)
 		if(!empty(l:line_with_zettel_id))
 			let l:zettel_id = l:line_with_zettel_id[1]
 			let l:title = GetTitleOfZettel(l:zettel_id)
