@@ -72,7 +72,9 @@ func! ZettelOpenUnderCursor()
 endf
 
 func! ZettelNew() " relying on https://github.com/srid/neuron
-	exec 'e '.system('neuron new "PLACEHOLDER"').' |norm jfP"_D'
+	exec 'e '.system('neuron new "PLACEHOLDER"')
+				\ .' | call search("PLACEHOLDER") | norm"_D'
+	startinsert!
 endf
 
 func! Insert(thing)
