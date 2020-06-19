@@ -19,7 +19,7 @@ Plug 'BurntSushi/ripgrep'
 Plug 'ihsanturk/neuron.vim'
 ```
 
-## Mappings
+## Default Mappings
 ```vim
 nm gzn <Plug>EditZettelNew
 nm gzb <Plug>NeuronRibStart
@@ -29,3 +29,13 @@ nm gzz <Plug>EditZettelSelect
 nm gzi <Plug>InsertZettelSelect
 nm gzo <Plug>EditZettelUnderCursor
 ```
+You can disable the mappings with letting the `g:neuron_no_mappings` variable to
+1:
+```vim
+let g:neuron_no_mappings = 1
+```
+
+There is no mapping for `:NeuronRibStop` you can stop the server by
+- typing this command in ex mode
+or
+- leaving the vim session (vim will stop the process automatically)
