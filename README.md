@@ -18,6 +18,10 @@ Plug 'BurntSushi/ripgrep'
 ```vim
 Plug 'ihsanturk/neuron.vim'
 ```
+If you want to use the `dev` branch to test the new features:
+```vim
+Plug 'ihsanturk/neuron.vim', { 'branch': 'dev' }
+```
 
 ## Default Mappings
 ```vim
