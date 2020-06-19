@@ -46,7 +46,7 @@ aug neuron
 	au BufLeave * call neuron#refresh_cache()
 aug END
 
-com! NeuronRibStart :call <SID>s:neuron_rib_start()<cr>
-com! NeuronRibStop  :call <SID>s:neuron_rib_stop()<cr>
+com! NeuronRibStart :call rpc#start_server()
+com! NeuronRibStop  :call rpc#stop_server()
 
 " : vim: set fdm=marker :
