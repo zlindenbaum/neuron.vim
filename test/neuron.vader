@@ -1,0 +1,14 @@
+Include: setup.vader
+
+Execute (util#filter_zettels_in_line):
+  AssertEqual util#filter_zettels_in_line(g:line, 0), '0ea4e05f'
+
+Execute (util#get_formatted_zettelid):
+  AssertThrows util#get_formatted_zettelid('0620e91')
+  AssertEqual util#get_formatted_zettelid('0620e9c1'), '<0620e9c1>'
+
+Execute (util#filter_zettels_in_line):
+  AssertEqual util#filter_zettels_in_line('0620e9c1', 0), '0620e9c1'
+  AssertEqual util#filter_zettels_in_line('0620e9c1'), ['0620e9c1']
+
+Include: cleanup.vader
