@@ -72,13 +72,9 @@ func! util#get_formatted_zettelid(line, ...)
 	end
 endf
 
-"                 ==========  // I stayed here \\  ==========                 "
-
 func! util#insert_shrink_fzf(line)
 	call util#insert(util#get_formatted_zettelid(a:line, 0))
 endf
-
-"                 ==========  \\ I stayed here //  ==========                 "
 
 func! util#edit_shrink_fzf(line)
 	call neuron#edit_zettel(util#filter_zettels_in_line(a:line, 0))
@@ -87,4 +83,18 @@ endf
 " OLD_NAME: LastModifiedFile(dir, extension)
 func! util#get_file_modified_last(dir, extension)
 	return system('ls -t '.a:dir.'*'.a:extension.' | head -1')
+endf
+
+func! util#remove_orphans(title)
+	let l:count = 0
+	let l:targetdir = '/tmp/orphan-zettels'
+	call mkdir(l:targetdir, 'p')
+	for i in keys(g:cache_zettels)
+		if g:cache_zettels[i]['title'] == a:title
+			call system("mv ".g:cache_zettels[i]['path']." ".l:targetdir)
+			let l:count += 1
+		end
+	endfor
+	echom l:count.' orphan zettels are moved to '.l:targetdir.'.'
+	echom 'You can manually delete '.l:targetdir.' directory.'
 endf
