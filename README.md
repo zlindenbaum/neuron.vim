@@ -21,10 +21,11 @@ Plug 'ihsanturk/neuron.vim'
 
 ## Mappings
 ```vim
-nm <m-z>           :call ZettelSearch()<cr>
-nm <LocalLeader>zn :call ZettelNew()<cr>
-nm <LocalLeader>zi :call ZettelSearchInsert()<cr>
-nm <LocalLeader>zl :call ZettelLastInsert()<cr>
-nm <LocalLeader>zo :call ZettelOpenUnderCursor()<cr>
-nm <LocalLeader>zu :call ZettelOpenLast()<cr>
+nm gzn <Plug>EditZettelNew
+nm gzb <Plug>NeuronRibStart
+nm gzu <Plug>EditZettelLast
+nm gzl <Plug>InsertZettelLast
+nm gzz <Plug>EditZettelSelect
+nm gzi <Plug>InsertZettelSelect
+nm gzo <Plug>EditZettelUnderCursor
 ```
