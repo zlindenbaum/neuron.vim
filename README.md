@@ -8,6 +8,8 @@ help of [neuron](https://github.com/srid/neuron) in {n}vim.
 - [neuron](https://github.com/srid/neuron)
 - [fzf](https://github.com/junegunn/fzf.vim)
 - [ripgrep](https://github.com/BurntSushi/ripgrep)
+- [jq](https://stedolan.github.io/jq/)
+
 
 ## Installation
 ### Using [vim-plug](https://github.com/junegunn/vim-plug)
