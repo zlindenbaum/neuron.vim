@@ -18,13 +18,28 @@ Plug 'BurntSushi/ripgrep'
 ```vim
 Plug 'ihsanturk/neuron.vim'
 ```
-
-## Mappings
+If you want to use the `dev` branch to test the new features:
 ```vim
-nm <m-z>           :call ZettelSearch()<cr>
-nm <LocalLeader>zn :call ZettelNew()<cr>
-nm <LocalLeader>zi :call ZettelSearchInsert()<cr>
-nm <LocalLeader>zl :call ZettelLastInsert()<cr>
-nm <LocalLeader>zo :call ZettelOpenUnderCursor()<cr>
-nm <LocalLeader>zu :call ZettelOpenLast()<cr>
+Plug 'ihsanturk/neuron.vim', { 'branch': 'dev' }
 ```
+
+## Default Mappings
+```vim
+nm gzn <Plug>EditZettelNew
+nm gzb <Plug>NeuronRibStart
+nm gzu <Plug>EditZettelLast
+nm gzl <Plug>InsertZettelLast
+nm gzz <Plug>EditZettelSelect
+nm gzi <Plug>InsertZettelSelect
+nm gzo <Plug>EditZettelUnderCursor
+```
+You can disable the mappings with letting the `g:neuron_no_mappings` variable to
+1:
+```vim
+let g:neuron_no_mappings = 1
+```
+
+There is no mapping for `:NeuronRibStop` you can stop the server by
+- typing this command in ex mode
+or
+- leaving the vim session (vim will stop the process automatically)
