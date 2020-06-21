@@ -13,7 +13,7 @@ func! s:set_filetype()
 endf
 
 func! s:add_virtual_titles()
-	let l:re_neuron_link = '<\([0-9a-z]\{8}\)>' " TODO: Get ids from cache.
+	let l:re_neuron_link = '<\([0-9a-zA-Z_-]\+\)>' " TODO: Get ids from cache.
 	if !exists('*nvim_buf_set_virtual_text')
 		finish
 	endif
