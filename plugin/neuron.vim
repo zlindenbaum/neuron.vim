@@ -26,7 +26,7 @@ let g:style_virtual_title = get(g:, 'style_virtual_title', 'Comment')
 " }}}
 " Variables {{{1
 
-let g:re_neuron_link = '<\([0-9a-z]\{8}\)>'
+let g:re_neuron_link = '<\([0-9a-zA-Z_-]\+\)>'
 
 " }}}
 " Functions {{{1
