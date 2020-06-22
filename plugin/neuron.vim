@@ -13,8 +13,6 @@ let g:loaded_neuron_vim = 1
 
 call neuron#refresh_cache()
 
-let g:zextension          = get(g:, 'zextension', '.md')
-let g:zkdir               = get(g:, 'zkdir', $HOME.'/zettelkasten/')
 let g:neuron_no_mappings  = get(g:, 'neuron_no_mappings', 0)
 let g:style_virtual_title = get(g:, 'style_virtual_title', 'Comment')
 let g:fzf_options         = get(g:, 'fzf_options', ['-d',':','--with-nth','2'])

@@ -1,8 +1,11 @@
-if exists('b:did_ftplugin') | finish | endif
+let g:zextension = get(g:, 'zextension', '.md')
+let g:zkdir = get(g:, 'zkdir', $HOME.'/zettelkasten/')
+
+if exists('b:did_ftdetect') | finish | endif
 aug neuron
-	au BufRead,BufNewFile * call s:set_filetype()
+	exec ':au! BufRead,BufNewFile '.g:zkdir.'*'.g:zextension.' call s:set_filetype()'
 aug END
-let b:did_ftplugin = 1
+let b:did_ftdetect = 1
 
 func! s:set_filetype()
 	" TODO: Activate markdown and neuron filetype at the same time.
