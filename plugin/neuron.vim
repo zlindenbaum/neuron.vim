@@ -11,11 +11,11 @@ if exists("g:loaded_neuron_vim")
 endif
 let g:loaded_neuron_vim = 1
 
-call neuron#refresh_cache()
-
 let g:neuron_no_mappings  = get(g:, 'neuron_no_mappings', 0)
 let g:style_virtual_title = get(g:, 'style_virtual_title', 'Comment')
 let g:fzf_options         = get(g:, 'fzf_options', ['-d',':','--with-nth','2'])
+let g:path_jq             = get(g:, 'path_jq', system('which jq | tr -d "\n"'))
+let g:path_neuron = get(g:, 'path_neuron', system('which neuron | tr -d "\n"'))
 
 let g:neuron_rib_job = -1
 
@@ -41,7 +41,8 @@ if !exists("g:neuron_no_mappings") || ! g:neuron_no_mappings
 end
 
 aug neuron
-	au BufLeave * call neuron#refresh_cache()
+	exec ':au! BufWritePost '.g:zkdir.'*'.g:zextension.
+			\ ' call neuron#refresh_cache()'
 aug END
 
 com! NeuronRibStart :call rpc#start_server()

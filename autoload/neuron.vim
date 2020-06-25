@@ -1,26 +1,38 @@
 " command! -nargs=* ShrinkFZF call s:shrink_fzf(<q-args>)
 " OLD_NAME: ZettelSearchInsert()
 func! neuron#insert_zettel_select()
-	let l:fzf_options_tmp = deepcopy(g:fzf_options)
-	call extend(l:fzf_options_tmp, ['--prompt', 'Insert Zettel ID: '])
-	" call neuron#refresh_cache()
-	return fzf#run(fzf#wrap({
-		\ 'options': l:fzf_options_tmp,
-		\ 'source': util#get_list_pair_zettelid_zetteltitle(),
-		\ 'sink': function('util#insert_shrink_fzf'),
-	\ }))
+	try
+		if !exists('g:cache_zettels') || empty('g:cache_zettels')
+			call neuron#refresh_cache()
+		endif
+		call fzf#run(fzf#wrap({
+			\ 'options': extend(deepcopy(g:fzf_options),['--prompt','Insert Zettel ID: ']),
+			\ 'source': util#get_list_pair_zettelid_zetteltitle(),
+			\ 'sink': function('util#insert_shrink_fzf'),
+		\ }))
+	catch /^neuron not found/
+		call s:warn("Add: let g:path_neuron = 'path/to/neuron' to your vimrc")
+	catch /^jq not found/
+		call s:warn("Add: let g:path_jq = 'path/to/jq' to your vimrc.")
+	endtry
 endf
 
 " OLD_NAME: ZettelSearch() "opens the zettel after search.
 func! neuron#edit_zettel_select()
-	let l:fzf_options_tmp = deepcopy(g:fzf_options)
-	call extend(l:fzf_options_tmp, ['--prompt', 'Edit Zettel: '])
-	" call neuron#refresh_cache()
-	call fzf#run(fzf#wrap({
-		\ 'options': l:fzf_options_tmp,
-		\ 'source': util#get_list_pair_zettelid_zetteltitle(),
-		\ 'sink': function('util#edit_shrink_fzf'),
-	\ }))
+	try
+		if !exists('g:cache_zettels') || empty('g:cache_zettels')
+			call neuron#refresh_cache()
+		endif
+		call fzf#run(fzf#wrap({
+			\ 'options': extend(deepcopy(g:fzf_options),['--prompt','Edit Zettel: ']),
+			\ 'source': util#get_list_pair_zettelid_zetteltitle(),
+			\ 'sink': function('util#edit_shrink_fzf'),
+		\ }))
+	catch /^jq not found/
+		call s:warn("Add: let g:path_jq = 'path/to/jq' to your vimrc.")
+	catch /^neuron not found/
+		call s:warn("Add: let g:path_neuron = 'path/to/neuron' to your vimrc")
+	endtry
 endf
 
 " OLD_NAME: ZettelOpenLast()
@@ -49,21 +61,24 @@ func! neuron#edit_zettel_under_cursor()
 	if util#is_zettel_valid(l:zettel_id)
 		call neuron#edit_zettel(l:zettel_id)
 	else
-		echom "No such zettel!"
-	end
+		throw "No such zettel"
+	endif
 endf
 
 " OLD_NAME: GetTitleOfZettel(ZettelID)
 func! neuron#get_zettel_title(zettel_id)
-	" call neuron#refresh_cache()
+	if !exists('g:cache_zettels') || empty('g:cache_zettels')
+		throw "g:cache_zettels not found!"
+	endif
 	return g:cache_zettels[a:zettel_id]['title']
 endf
 
 " TODO: Remove jq dependency find vimscript native solution.
 func! neuron#refresh_cache()
-	let g:cache_zettels = json_decode(s:run(
-		\ "query --uri 'z:zettels'|jq 'reduce .result[] as $i ({}; .[$i.id]=$i)'"
-		\ ))
+	let l:neuron_output = s:run_neuron("query --uri 'z:zettels'")
+	let jq_output =
+		\ s:run_jq("'reduce .result[] as $i ({}; .[$i.id]=$i)'", l:neuron_output)
+	let g:cache_zettels = json_decode(jq_output)
 endf
 
 " OLD_NAME: ZettelOpen(zettel_id)
@@ -71,8 +86,18 @@ func! neuron#edit_zettel(zettel_id)
 	exec 'edit '.s:expand_zettel_id(a:zettel_id)
 endf
 
-func! s:run(cmd)
-	return system('neuron '.a:cmd)
+func! s:run_neuron(cmd)
+	if !executable(g:path_neuron)
+		throw 'neuron not found'
+	endif
+	return system(g:path_neuron.' '.a:cmd)
+endf
+
+func! s:run_jq(cmd, ...)
+	if !executable(g:path_jq)
+		throw "jq not found"
+	endif
+	return system(g:path_jq.' '.a:cmd, a:1) " in this case, a:1 is stdin
 endf
 
 func! s:expand_zettel_id(zettel_id)
@@ -82,4 +107,11 @@ endf
 " OLD_NAME: ZettelLast()
 func! s:get_zettel_last()
 	return util#get_file_modified_last(g:zkdir, g:zextension)
+endf
+
+func! s:warn(msg)
+	echohl WarningMsg
+	echom a:msg
+	echohl None
+	return 0
 endf
