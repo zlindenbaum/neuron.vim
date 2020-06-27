@@ -24,35 +24,51 @@ endf
 func! util#get_list_pair_zettelid_zetteltitle()
 	let l:final = []
 	for i in keys(g:cache_zettels)
-		" call add(l:final, g:cache_zettels[i]['path'].':'.g:cache_zettels[i]['title'])
-		call add(l:final, i.':'.g:cache_zettels[i]['title'])
+		call add(l:final, util#format_zettelid(i).':'.g:cache_zettels[i]['title'])
 	endfor
 	return l:final
 endf
 
-func! util#is_zettel_valid(zettelid)
-	" call neuron#refresh_cache()
-	if index(keys(g:cache_zettels), a:zettelid) >= 0
-		return v:true
+func! util#is_zettelid_valid(zettelid)
+	if empty(a:zettelid)
+		return 0
+	end
+	if index(keys(g:cache_zettels), util#deform_zettelid(a:zettelid)) >= 0
+		return 1
 	else
-		return v:false
+		return 0
+	end
 endf
 
 func! util#filter_zettels_in_line(line, ...)
 	let l:found = []
 	let l:n = get(a:, 1, -1)
-	" call neuron#refresh_cache()
 	for i in keys(g:cache_zettels)
-		let l:matched = matchstr(a:line, i)
-		" if l:matched != ''
+		let l:matched = util#deform_zettelid(matchstr(a:line, util#format_zettelid(i)))
 		if !empty(l:matched)
-			call add(l:found, l:matched) 
+			call add(l:found, l:matched)
 		end
 	endfor
-	if l:n < 0
-		return l:found
+	if l:n < 0 " index given as optional arg in
+		return l:found " list
 	else
-		return l:found[l:n]
+		return l:found[l:n] " string
+	end
+endf
+
+func! util#deform_zettelid(zettelid)
+	if a:zettelid =~ "<.*>"
+		return substitute(a:zettelid, '<\([0-9a-zA-Z_-]\+\)\(?cf\)\?>', '\1', 'g')
+	else
+		return a:zettelid
+	end
+endf
+
+func! util#format_zettelid(zettelid)
+	if a:zettelid =~ "<.*>"
+		return a:zettelid
+	else
+		return '<'.a:zettelid.'>'
 	end
 endf
 
@@ -61,14 +77,9 @@ func! util#get_formatted_zettelid(line, ...)
 	let l:n = get(a:, 1, 0)
 	let l:found = util#filter_zettels_in_line(a:line)
 	if len(l:found) > l:n
-		let l:decided = l:found[l:n]
-		if l:decided =~ "<.*>"
-			return l:decided
-		else
-			return '<'.l:decided.'>'
-		end
+		return util#format_zettelid(l:found[l:n])
 	else
-		throw "Error: Can't find any zettel id in this line!"
+		throw 'Could not find any zettelids in this line: "'.a:line.'"'
 	end
 endf
 

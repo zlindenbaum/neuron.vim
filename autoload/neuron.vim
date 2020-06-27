@@ -58,7 +58,7 @@ endf
 " OLD_NAME: ZettelOpenUnderCursor()
 func! neuron#edit_zettel_under_cursor()
 	let l:zettel_id = expand('<cword>')
-	if util#is_zettel_valid(l:zettel_id)
+	if util#is_zettelid_valid(l:zettel_id)
 		call neuron#edit_zettel(l:zettel_id)
 	else
 		throw "No such zettel"
