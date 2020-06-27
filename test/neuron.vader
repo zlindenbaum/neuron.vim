@@ -1,14 +1,37 @@
 Include: setup.vader
 
 Execute (util#filter_zettels_in_line):
-  AssertEqual util#filter_zettels_in_line(g:line, 0), '0ea4e05f'
+  AssertEqual util#filter_zettels_in_line('0:<0620e9c1> 1:e01a0fff zkdir/2:<0ea4e05f>.md', 0), '0620e9c1'
+  AssertEqual util#filter_zettels_in_line('0:<0620e9c1> 1:e01a0fff zkdir/2:<0ea4e05f>.md', 1), '0ea4e05f'
+
+Execute (util#is_zettelid_valid):
+  AssertThrows util#is_zettelid_valid('')
+  Assert util#is_zettelid_valid('0620e9c1')
+  AssertThrows util#is_zettelid_valid('notazettelid')
+
+Execute (s:format_zettelid):
+  AssertEqual util#format_zettelid('<myzettelid>'), '<myzettelid>'
+  AssertEqual util#format_zettelid('myzettelid'), '<myzettelid>'
+
+Execute (s:deform_zettelid):
+  AssertEqual util#deform_zettelid('myzettelid'), 'myzettelid'
+  AssertEqual util#deform_zettelid('<myzettelid>'), 'myzettelid'
+  AssertEqual util#deform_zettelid('<myzettelid?cf>'), 'myzettelid'
+
 
 Execute (util#get_formatted_zettelid):
-  AssertThrows util#get_formatted_zettelid('0620e91')
-  AssertEqual util#get_formatted_zettelid('0620e9c1'), '<0620e9c1>'
+  AssertThrows util#get_formatted_zettelid('notazettelid')
+  AssertThrows util#get_formatted_zettelid('0620e9c1')
+  AssertEqual util#get_formatted_zettelid('<0620e9c1>'), '<0620e9c1>'
 
 Execute (util#filter_zettels_in_line):
-  AssertEqual util#filter_zettels_in_line('0620e9c1', 0), '0620e9c1'
-  AssertEqual util#filter_zettels_in_line('0620e9c1'), ['0620e9c1']
+  AssertEqual util#filter_zettels_in_line('<0620e9c1>', 0), '0620e9c1'
+  AssertEqual util#filter_zettels_in_line('lkajdsfl a<0620e9c1>'), ['0620e9c1']
+
+  AssertThrows util#filter_zettels_in_line('0620e9c1')
+  AssertThrows util#filter_zettels_in_line('0620e9c1', 0)
+
+  AssertNotEqual util#filter_zettels_in_line('junk0620e9c1'), ['0620e9c1']
+  AssertNotEqual util#filter_zettels_in_line('junk 0620e9c1'), ['0620e9c1']
 
 Include: cleanup.vader
