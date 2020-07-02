@@ -46,3 +46,8 @@ There is no mapping for `:NeuronRibStop` you can stop the server by
 - typing this command in ex mode
 or
 - leaving the vim session (vim will stop the process automatically)
+
+## Donate
+- Bitcoin: `1JmTyije6qxKLRWLyKeUk7DhbUTU9RMBPu`
+- USDT: `0xd6af1842c4a1a56ee3494deea57bcbae44af02a9`
+- Ethereum: `0xf32A82328fF44009E7419A15E22aCE1A3553aD56`
