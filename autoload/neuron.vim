@@ -88,13 +88,13 @@ func! s:run_neuron(cmd)
 	return system(g:path_neuron.' '.a:cmd)
 endf
 
-func! s:run_jq(cmd, ...)
+func! s:run_jq(cmd, data)
 	try
 		if !executable(g:path_jq)
 			call util#handlerr('E2')
 		endif
 	endtry
-	return system(g:path_jq.' '.a:cmd, a:1) " in this case, a:1 is stdin
+	return system(g:path_jq.' '.a:cmd, a:data)
 endf
 
 func! s:expand_zettel_id(zettel_id)
