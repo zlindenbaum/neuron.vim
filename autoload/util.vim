@@ -79,11 +79,12 @@ endf
 func! util#get_formatted_zettelid(line, ...)
 	let l:n = get(a:, 1, 0)
 	let l:found = util#filter_zettels_in_line(a:line)
-	if len(l:found) > l:n
-		return util#format_zettelid(l:found[l:n])
-	else
-		throw 'Could not find any zettelids in this line: "'.a:line.'"'
-	end
+	try
+		if len(l:found) <= l:n
+			call util#handlerr('E4')
+		end
+	endtry
+	return util#format_zettelid(l:found[l:n])
 endf
 
 func! util#insert_shrink_fzf(line)
@@ -95,7 +96,7 @@ func! util#edit_shrink_fzf(line)
 endf
 
 func! util#get_file_modified_last(dir, extension)
-	return system('ls -t '.a:dir.'*'.a:extension.' | head -1')
+	return system('ls -t '.shellescape(a:dir).'*'.a:extension.' | head -1')
 endf
 
 func! util#remove_orphans(title)
@@ -110,4 +111,15 @@ func! util#remove_orphans(title)
 	endfor
 	echom l:count.' orphan zettels are moved to '.l:targetdir.'.'
 	echom 'You can manually delete '.l:targetdir.' directory.'
+endf
+
+func! util#handlerr(errcode)
+	let l:neuron_errors = deepcopy(g:neuron_errors)
+	let l:err = l:neuron_errors[a:errcode]
+	let l:errmsg='neuron: '.a:errcode.': '.l:err['problem']
+	if len(l:err['suggestions']) > 0
+		let l:errmsg .= '! suggestion(s): '.
+			\ join(l:err['suggestions'], ' or ')
+	end
+	echoerr l:errmsg
 endf

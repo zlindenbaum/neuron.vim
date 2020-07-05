@@ -42,12 +42,41 @@ if !exists("g:neuron_no_mappings") || ! g:neuron_no_mappings
 	nm gzo <Plug>EditZettelUnderCursor
 end
 
-aug neuron
-	exec ':au! BufWritePost '.g:zkdir.'*'.g:zextension.
-			\ ' call neuron#refresh_cache()'
-aug END
-
 com! NeuronRibStart :call rpc#start_server()
 com! NeuronRibStop  :call rpc#stop_server()
+
+let g:neuron_errors = {
+	\ 'E0': {
+		\ 'problem': 'g:cache_zettels not found',
+		\ 'suggestions': [
+			\ 'press: `gzr` to refresh the cache',
+			\ 'run `:call neuron#refresh_cache()`',
+		\ ],
+	\ },
+	\ 'E1': {
+		\ 'problem': "neuron not found",
+		\ 'suggestions': [
+			\ "add: `let g:path_neuron = 'path/to/neuron'` to your vimrc",
+		\ ],
+	\ },
+	\ 'E2': {
+		\ 'problem': "jq not found",
+		\ 'suggestions': [
+			\ "add: `let g:path_jq = 'path/to/jq'` to your vimrc",
+		\ ],
+	\ },
+	\ 'E3': {
+		\ 'problem': "no such zettel",
+		\ 'suggestions': [],
+	\ },
+	\ 'E4': {
+		\ 'problem': "can't find any zettelids in the line",
+		\ 'suggestions': [],
+	\ },
+	\ 'E5': {
+		\ 'problem': "external command failed",
+		\ 'suggestions': [],
+	\ },
+\ }
 
 " : vim: set fdm=marker :

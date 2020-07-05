@@ -1,18 +1,12 @@
 func! neuron#insert_zettel_select()
-	try
-		if !exists('g:cache_zettels') || empty('g:cache_zettels')
-			call neuron#refresh_cache()
-		endif
-		call fzf#run(fzf#wrap({
-			\ 'options': extend(deepcopy(g:fzf_options),['--prompt','Insert Zettel ID: ']),
-			\ 'source': util#get_list_pair_zettelid_zetteltitle(),
-			\ 'sink': function('util#insert_shrink_fzf'),
-		\ }))
-	catch /^neuron not found/
-		call s:warn("Add: let g:path_neuron = 'path/to/neuron' to your vimrc")
-	catch /^jq not found/
-		call s:warn("Add: let g:path_jq = 'path/to/jq' to your vimrc.")
-	endtry
+	if !exists('g:cache_zettels') || empty('g:cache_zettels')
+		call neuron#refresh_cache()
+	endif
+	call fzf#run(fzf#wrap({
+		\ 'options': extend(deepcopy(g:fzf_options),['--prompt','Insert Zettel ID: ']),
+		\ 'source': util#get_list_pair_zettelid_zetteltitle(),
+		\ 'sink': function('util#insert_shrink_fzf'),
+	\ }))
 endf
 
 func! neuron#edit_zettel_select()
@@ -37,9 +31,13 @@ func! neuron#edit_zettel_last()
 endf
 
 func! neuron#insert_zettel_last()
+	try
+		if !exists('g:cache_zettels') || empty('g:cache_zettels')
+			call util#handlerr('E0')
+		end
+	endtry
 	call util#insert(
-		\ util#get_formatted_zettelid(fnamemodify(s:get_zettel_last(), ':t:r')))
-	" call util#insert('<'.fnamemodify(s:get_zettel_last(), ':t:r').'>')
+		\ util#format_zettelid(fnamemodify(s:get_zettel_last(), ':t:r')))
 endf
 
 func! neuron#edit_zettel_new() " relying on https://github.com/srid/neuron
@@ -54,22 +52,26 @@ func! neuron#edit_zettel_under_cursor()
 	if util#is_zettelid_valid(l:zettel_id)
 		call neuron#edit_zettel(l:zettel_id)
 	else
-		throw "No such zettel"
+		call util#handlerr('E3')
 	endif
 endf
 
 func! neuron#get_zettel_title(zettel_id)
-	if !exists('g:cache_zettels') || empty('g:cache_zettels')
-		throw "g:cache_zettels not found!"
-	endif
+	try
+		if !exists('g:cache_zettels') || empty('g:cache_zettels')
+			call util#handlerr('E0')
+		endif
+	endtry
 	return g:cache_zettels[a:zettel_id]['zettelTitle']
 endf
 
 " TODO: Remove jq dependency find vimscript native solution.
 func! neuron#refresh_cache()
-	let l:neuron_output = s:run_neuron("query --uri 'z:zettels'")
+	let l:neuron_output = s:run_neuron(
+		\ "-d ".shellescape(g:zkdir)." query --uri 'z:zettels'")
 	let jq_output =
-		\ s:run_jq("'reduce .result[] as $i ({}; .[$i.zettelID]=$i)'", l:neuron_output)
+		\ s:run_jq("'reduce .result[] as $i ({}; .[$i.zettelID]=$i)'",
+			\ l:neuron_output)
 	let g:cache_zettels = json_decode(jq_output)
 endf
 
@@ -78,17 +80,31 @@ func! neuron#edit_zettel(zettel_id)
 endf
 
 func! s:run_neuron(cmd)
-	if !executable(g:path_neuron)
-		throw 'neuron not found'
-	endif
-	return system(g:path_neuron.' '.a:cmd)
+	try
+		if !executable(g:path_neuron)
+			call util#handlerr('E1')
+		endif
+	endtry
+	let l:cmdout = system(g:path_neuron.' '.a:cmd)
+	if v:shell_error != 0
+		call s:warn(l:cmdout)
+		call util#handlerr('E5')
+	end
+	return l:cmdout
 endf
 
-func! s:run_jq(cmd, ...)
-	if !executable(g:path_jq)
-		throw "jq not found"
-	endif
-	return system(g:path_jq.' '.a:cmd, a:1) " in this case, a:1 is stdin
+func! s:run_jq(cmd, data)
+	try
+		if !executable(g:path_jq)
+			call util#handlerr('E2')
+		endif
+	endtry
+	let l:cmdout = system(g:path_jq.' '.a:cmd, a:data)
+	if v:shell_error != 0
+		call s:warn(l:cmdout)
+		call util#handlerr('E5')
+	end
+	return l:cmdout
 endf
 
 func! s:expand_zettel_id(zettel_id)
@@ -101,7 +117,7 @@ endf
 
 func! s:warn(msg)
 	echohl WarningMsg
-	echom a:msg
+	echo a:msg
 	echohl None
 	return 0
 endf

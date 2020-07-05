@@ -4,6 +4,8 @@ let g:zkdir = get(g:, 'zkdir', $HOME.'/zettelkasten/')
 if exists('b:did_ftdetect') | finish | endif
 aug neuron
 	exec ':au! BufRead,BufNewFile '.g:zkdir.'*'.g:zextension.' call s:set_filetype()'
+	exec ':au! BufWritePost '.g:zkdir.'*'.g:zextension.
+		\ ' call neuron#refresh_cache()'
 aug END
 let b:did_ftdetect = 1
 
@@ -24,7 +26,7 @@ func! s:add_virtual_titles()
 	endif
 	call nvim_buf_clear_namespace(0, 0, 0, line('$'))
 	let l:lnum = 0
-	for line in readfile(expand("%:p"))
+	for line in getbufline(bufname('%'), 1, "$")
 		let l:line_matches = matchlist(line, l:re_neuron_link)
 		if(!empty(l:line_matches))
 			let l:zettel_id = l:line_matches[1]
