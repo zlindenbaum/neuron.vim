@@ -78,6 +78,10 @@ let g:neuron_errors = {
 		\ 'problem': "can't find any zettelids in the line",
 		\ 'suggestions': [],
 	\ },
+	\ 'E5': {
+		\ 'problem': "external command failed",
+		\ 'suggestions': [],
+	\ },
 \ }
 
 " : vim: set fdm=marker :

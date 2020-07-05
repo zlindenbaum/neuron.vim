@@ -85,7 +85,12 @@ func! s:run_neuron(cmd)
 			call util#handlerr('E1')
 		endif
 	endtry
-	return system(g:path_neuron.' '.a:cmd)
+	let l:cmdout = system(g:path_neuron.' '.a:cmd)
+	if v:shell_error != 0
+		call s:warn(l:cmdout)
+		call util#handlerr('E5')
+	end
+	return l:cmdout
 endf
 
 func! s:run_jq(cmd, data)
@@ -94,7 +99,12 @@ func! s:run_jq(cmd, data)
 			call util#handlerr('E2')
 		endif
 	endtry
-	return system(g:path_jq.' '.a:cmd, a:data)
+	let l:cmdout = system(g:path_jq.' '.a:cmd, a:data)
+	if v:shell_error != 0
+		call s:warn(l:cmdout)
+		call util#handlerr('E5')
+	end
+	return l:cmdout
 endf
 
 func! s:expand_zettel_id(zettel_id)
@@ -107,7 +117,7 @@ endf
 
 func! s:warn(msg)
 	echohl WarningMsg
-	echom a:msg
+	echo a:msg
 	echohl None
 	return 0
 endf
