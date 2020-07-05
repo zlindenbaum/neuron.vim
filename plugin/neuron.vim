@@ -42,11 +42,6 @@ if !exists("g:neuron_no_mappings") || ! g:neuron_no_mappings
 	nm gzo <Plug>EditZettelUnderCursor
 end
 
-aug neuron
-	exec ':au! BufWritePost '.g:zkdir.'*'.g:zextension.
-			\ ' call neuron#refresh_cache()'
-aug END
-
 com! NeuronRibStart :call rpc#start_server()
 com! NeuronRibStop  :call rpc#stop_server()
 

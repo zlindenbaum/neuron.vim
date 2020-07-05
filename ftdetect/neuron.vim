@@ -4,6 +4,8 @@ let g:zkdir = get(g:, 'zkdir', $HOME.'/zettelkasten/')
 if exists('b:did_ftdetect') | finish | endif
 aug neuron
 	exec ':au! BufRead,BufNewFile '.g:zkdir.'*'.g:zextension.' call s:set_filetype()'
+	exec ':au! BufWritePost '.g:zkdir.'*'.g:zextension.
+		\ ' call neuron#refresh_cache()'
 aug END
 let b:did_ftdetect = 1
 
