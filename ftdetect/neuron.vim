@@ -22,7 +22,7 @@ func! s:add_virtual_titles()
 	" TODO: Get ids from cache.
 	let l:re_neuron_link = '<\([0-9a-zA-Z_-]\+\)\(?cf\)\?>'
 	if !exists('*nvim_buf_set_virtual_text')
-		finish
+		return
 	endif
 	call nvim_buf_clear_namespace(0, 0, 0, line('$'))
 	let l:lnum = 0
