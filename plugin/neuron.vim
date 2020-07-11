@@ -1,10 +1,10 @@
-" =============================================================================
-" File:        neuron.vim
-" Description: Take zettelkasten notes using neuron in Vim.
-" Author:      ihsan <ihsanl at pm dot me>
-" Created At:  1590326456
-" License:     MIT License
-" =============================================================================
+"           ╭─────────────────────neuron.vim──────────────────────╮
+"           Maintainer:     ihsan, ihsanl[at]pm[dot]me            │
+"           Description:    Take zettelkasten notes using neuron  │
+"           Last Change:    2020 Jul 09 16:29:35 +03, @1594301382 │
+"           First Appeared: 2020 May 24 16:20:56 +03, @1590326456 │
+"           License:        MIT                                   │
+"           ╰─────────────────────────────────────────────────────╯
 
 if exists("g:loaded_neuron_vim")
 	finish
