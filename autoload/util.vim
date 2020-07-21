@@ -100,17 +100,21 @@ func! util#get_file_modified_last(dir, extension)
 endf
 
 func! util#remove_orphans(title)
-	let l:count = 0
-	let l:targetdir = '/tmp/orphan-zettels'
-	call mkdir(l:targetdir, 'p')
-	for i in keys(g:cache_zettels)
-		if g:cache_zettels[i]['zettelTitle'] == a:title
-			call system("mv ".g:cache_zettels[i]['path']." ".l:targetdir)
-			let l:count += 1
-		end
-	endfor
-	echom l:count.' orphan zettels are moved to '.l:targetdir.'.'
-	echom 'You can manually delete '.l:targetdir.' directory.'
+	if util#cache_exists()
+		let l:count = 0
+		let l:targetdir = '/tmp/orphan-zettels/'
+		call mkdir(l:targetdir, 'p')
+		for i in keys(g:cache_zettels)
+			if g:cache_zettels[i]['zettelTitle'] == a:title
+				call system("mv ".g:zkdir.g:cache_zettels[i]['zettelPath']." ".l:targetdir)
+				let l:count += 1
+			end
+		endfor
+		echom l:count.' orphan zettels are moved to '.l:targetdir.'.'
+		echom 'You can manually delete '.l:targetdir.' directory.'
+	else
+		call util#handlerr('E0')
+	end
 endf
 
 func! util#handlerr(errcode)
