@@ -34,6 +34,7 @@ MAPPINGS                                        *neuron.vim-mappings*
              nm gzi <Plug>InsertZettelSelect
              nm gzr <Plug>NeuronRefreshCache
              nm gzo <Plug>EditZettelUnderCursor
+             nm gzs <Plug>EditZettelSearchContent
 
 ABOUT                                           *neuron.vim-about*
 
