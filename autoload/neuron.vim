@@ -9,6 +9,22 @@ func! neuron#insert_zettel_select()
 	\ }))
 endf
 
+func! neuron#search_content(query, fullscreen)
+	let cmd_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
+	let initial_cmd = printf(cmd_fmt, shellescape(a:query))
+	let reload_cmd = printf(cmd_fmt, '{q}')
+	let spec = {'dir': g:zkdir,
+		\ 'options': [
+			\ '--phony',
+			\ '--query',
+			\ a:query,
+			\ '--bind',
+			\ 'change:reload:'.reload_cmd
+		\]
+	\}
+	call fzf#vim#grep(initial_cmd,1,fzf#vim#with_preview(spec),a:fullscreen)
+endf
+
 func! neuron#edit_zettel_select()
 	try
 		if !util#cache_exists()
