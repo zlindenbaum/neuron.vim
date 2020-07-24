@@ -12,16 +12,20 @@ g:style_virtual_title   Style the virtual titles. The value can be anything
                         from the output of |hi| command. Default >
                         let g:style_virtual_title = 'Comment'
 
-g:zexte                 Zettel file extension. Default: >
+g:zextension            Zettel file extension. Default: >
                         let g:zexte = '.md'
 
 g:zkdir                 Zettelkasten directory. Default: >
                         let g:zkdir = $HOME.'/zettelkasten/'
 
-g:fzf_options           All fzf commands are uses these options. For example
-                        you can change the prompt Default: >
+g:fzf_options           Change the fzf parameters. Default: >
+                        let g:fzf_options = ['-d',':','--with-nth','2']
 
-      let g:fzf_options = '-d"title: " --with-nth 2 --prompt "Zettelkasten: "'
+g:path_jq               Path to jq. Default >
+                        let g:path_jq = system('which jq | tr -d "\n"')
+
+g:path_neuron           Path to neuron. Default >
+                        let g:path_neuron = system('which neuron | tr -d "\n"')
 
 MAPPINGS                                        *neuron.vim-mappings*
 
