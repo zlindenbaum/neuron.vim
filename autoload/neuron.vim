@@ -32,7 +32,7 @@ endf
 
 func! neuron#insert_zettel_last()
 	try
-		if !exists('g:cache_zettels') || empty('g:cache_zettels')
+		if !exists('g:cache_zettels') || empty('g:cache_zettels') " TODO: use util#cache_exists() instead
 			call util#handlerr('E0')
 		end
 	endtry
@@ -58,7 +58,7 @@ endf
 
 func! neuron#get_zettel_title(zettel_id)
 	try
-		if !exists('g:cache_zettels') || empty('g:cache_zettels')
+		if !exists('g:cache_zettels') || empty('g:cache_zettels') " TODO: use util#cache_exists() instead
 			call util#handlerr('E0')
 		endif
 	endtry

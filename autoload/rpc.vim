@@ -1,13 +1,11 @@
-func! s:on_exit(chan_id, code, ...) abort
+func! s:on_exit(chan_id, data, ...) abort
 	let g:neuron_rib_job = -1
 endf
 
 func! rpc#start_server()
 	let options = {
-		\ 'err_mode': 'nl',
-		\ 'out_mode': 'nl',
-		\ 'exit_cb': function('s:on_exit'),
-		\}
+		\ 'on_exit': function('s:on_exit'),
+	\}
 	if g:neuron_rib_job == -1
 		let g:neuron_rib_job = jobstart(['neuron', 'rib', '-wS'], options)
 		echom 'Neuron rib server started.'
@@ -29,9 +27,9 @@ endf
 func! rpc#open_preview_page()
 	let l:opener = {'linux': 'xdg-open', 'macos': 'open'}
 	let l:platform = util#get_platform()
-	let l:current_buffer = expand('%:t:r')
+	let l:current_zettel = expand('%:t:r')
 	if util#is_current_buf_zettel()
-		let l:url = 'http://127.0.0.1:8080/'.l:current_buffer.'.html'
+		let l:url = 'http://127.0.0.1:8080/'.l:current_zettel.'.html'
 	else
 		let l:url = 'http://127.0.0.1:8080/'
 	end
