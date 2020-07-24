@@ -1,7 +1,7 @@
 "           ╭─────────────────────neuron.vim──────────────────────╮
 "           Maintainer:     ihsan, ihsanl[at]pm[dot]me            │
 "           Description:    Take zettelkasten notes using neuron  │
-"           Last Change:    2020 Jul 09 16:29:35 +03, @1594301382 │
+"           Last Change:    2020 Jul 24 23:40:47 +03, @1595623251 │
 "           First Appeared: 2020 May 24 16:20:56 +03, @1590326456 │
 "           License:        MIT                                   │
 "           ╰─────────────────────────────────────────────────────╯
