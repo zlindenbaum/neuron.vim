@@ -19,14 +19,14 @@ let g:path_neuron = get(g:, 'path_neuron', system('which neuron | tr -d "\n"'))
 
 let g:neuron_rib_job = -1
 
-nm <silent> <Plug>NeuronRibStop      :<C-U>call rpc#stop_server()<cr>
-nm <silent> <Plug>NeuronRibStart     :<C-U>call rpc#start_server()<cr>
+nm <silent> <Plug>NeuronRibStop :<C-U>call rpc#stop_server()<cr>
+nm <silent> <Plug>NeuronRibStart :<C-U>call rpc#start_server()<cr>
+nm <silent> <Plug>EditZettelNew :<C-U>call neuron#edit_zettel_new()<cr>
 nm <silent> <Plug>EditZettelSearchContent :<C-U>NeuronSearchContent<cr>
+nm <silent> <Plug>EditZettelLast :<C-U>call neuron#edit_zettel_last()<cr>
 nm <silent> <Plug>NeuronRefreshCache :<C-U>call neuron#refresh_cache()<cr>
-nm <silent> <Plug>EditZettelNew      :<C-U>call neuron#edit_zettel_new()<cr>
-nm <silent> <Plug>EditZettelLast     :<C-U>call neuron#edit_zettel_last()<cr>
-nm <silent> <Plug>EditZettelSelect   :<C-U>call neuron#edit_zettel_select()<cr>
-nm <silent> <Plug>InsertZettelLast   :<C-U>call neuron#insert_zettel_last()<cr>
+nm <silent> <Plug>EditZettelSelect :<C-U>call neuron#edit_zettel_select()<cr>
+nm <silent> <Plug>InsertZettelLast :<C-U>call neuron#insert_zettel_last()<cr>
 nm <silent> <Plug>InsertZettelSelect
 			\ :<C-U>call neuron#insert_zettel_select()<cr>
 nm <silent> <Plug>EditZettelUnderCursor
