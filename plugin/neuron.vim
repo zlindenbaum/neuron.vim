@@ -21,6 +21,7 @@ let g:neuron_rib_job = -1
 
 nm <silent> <Plug>NeuronRibStop      :<C-U>call rpc#stop_server()<cr>
 nm <silent> <Plug>NeuronRibStart     :<C-U>call rpc#start_server()<cr>
+nm <silent> <Plug>EditZettelSearchContent :<C-U>NeuronSearchContent<cr>
 nm <silent> <Plug>NeuronRefreshCache :<C-U>call neuron#refresh_cache()<cr>
 nm <silent> <Plug>EditZettelNew      :<C-U>call neuron#edit_zettel_new()<cr>
 nm <silent> <Plug>EditZettelLast     :<C-U>call neuron#edit_zettel_last()<cr>
@@ -40,10 +41,12 @@ if !exists("g:neuron_no_mappings") || ! g:neuron_no_mappings
 	nm gzi <Plug>InsertZettelSelect
 	nm gzr <Plug>NeuronRefreshCache
 	nm gzo <Plug>EditZettelUnderCursor
+	nm gzs <Plug>EditZettelSearchContent
 end
 
 com! NeuronRibStart :call rpc#start_server()
 com! NeuronRibStop  :call rpc#stop_server()
+com! -nargs=* -bang NeuronSearchContent call neuron#search_content(<q-args>, <bang>0)
 
 let g:neuron_errors = {
 	\ 'E0': {
