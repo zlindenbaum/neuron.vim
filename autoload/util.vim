@@ -21,19 +21,35 @@ func! util#insert(thing)
 	put =a:thing
 endf
 
+func! util#cache_exists()
+	if !exists('g:cache_zettels')
+		return 0
+	elseif empty(g:cache_zettels)
+		return 0
+	elseif type(g:cache_zettels) != 4 " dictionary
+		return 0
+	else
+		return 1
+	end
+endf
+
 func! util#get_list_pair_zettelid_zetteltitle()
 	let l:final = []
-	for i in keys(g:cache_zettels)
-		call add(l:final, util#format_zettelid(i).':'.g:cache_zettels[i]['zettelTitle'])
-	endfor
-	return l:final
+	if util#cache_exists()
+		for i in keys(g:cache_zettels)
+			call add(l:final, util#format_zettelid(i).':'.g:cache_zettels[i]['zettelTitle'])
+		endfor
+		return l:final
+	else
+		call util#handlerr('E0')
+	end
 endf
 
 func! util#is_zettelid_valid(zettelid)
 	if empty(a:zettelid)
 		return 0
 	end
-	if !exists('g:cache_zettels') || empty('g:cache_zettels')
+	if !util#cache_exists()
 		call neuron#refresh_cache()
 	endif
 	if index(keys(g:cache_zettels), util#deform_zettelid(a:zettelid)) >= 0

@@ -1,5 +1,5 @@
 func! neuron#insert_zettel_select()
-	if !exists('g:cache_zettels') || empty('g:cache_zettels')
+	if !util#cache_exists()
 		call neuron#refresh_cache()
 	endif
 	call fzf#run(fzf#wrap({
@@ -11,7 +11,7 @@ endf
 
 func! neuron#edit_zettel_select()
 	try
-		if !exists('g:cache_zettels') || empty('g:cache_zettels')
+		if !util#cache_exists()
 			call neuron#refresh_cache()
 		endif
 		call fzf#run(fzf#wrap({
@@ -32,7 +32,7 @@ endf
 
 func! neuron#insert_zettel_last()
 	try
-		if !exists('g:cache_zettels') || empty('g:cache_zettels') " TODO: use util#cache_exists() instead
+		if !util#cache_exists()
 			call util#handlerr('E0')
 		end
 	endtry
@@ -58,7 +58,7 @@ endf
 
 func! neuron#get_zettel_title(zettel_id)
 	try
-		if !exists('g:cache_zettels') || empty('g:cache_zettels') " TODO: use util#cache_exists() instead
+		if !util#cache_exists()
 			call util#handlerr('E0')
 		endif
 	endtry
