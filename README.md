@@ -42,10 +42,23 @@ You can disable the mappings with letting the `g:neuron_no_mappings` variable to
 let g:neuron_no_mappings = 1
 ```
 
-There is no mapping for `:NeuronRibStop` you can stop the server by
-- typing this command in ex mode
+## Caveats, Gotchas and Further Explanation
+
+The "**virtual titles**" displayed alongside the zettel IDs in the screenshot above will only work if using neovim. Standard vim does not support this.
+
+There is no mapping for `:NeuronRibStop` you can stop the server by:
+- typing the `:NeuronRibStop` command in ex mode
 or
 - leaving the vim session (vim will stop the process automatically)
+
+**Common actions and their default mappings:**  
+- To search zettels by title: `gzz` (entering the "select a zettel to edit" UI is synonymous with search.)
+- Create a new zettel with a random ID filename and open it for editing: `gzn`
+- Search for a zettel to insert as a link at the current cursor position: `gzi`
+- Add a link at the cursor position to the last zettel viewed: `gzl`
+- Go back to edit the last zettel viewed: `gzu`
+
+_Note: The last three mappings work nicely together as a workflow for making connections_.
 
 ## Donate
 - Bitcoin: `1JmTyije6qxKLRWLyKeUk7DhbUTU9RMBPu`
