@@ -82,6 +82,7 @@ func! neuron#get_zettel_title(zettel_id)
 endf
 
 " TODO: Remove jq dependency find vimscript native solution.
+" TODO: Make this async: Use jobstart for nvim and job_start for vim.
 func! neuron#refresh_cache()
 	let l:neuron_output = s:run_neuron(
 		\ "-d ".shellescape(g:zkdir)." query --uri 'z:zettels'")
