@@ -56,6 +56,7 @@ func! neuron#insert_zettel_last()
 		\ util#format_zettelid(fnamemodify(s:get_zettel_last(), ':t:r')))
 endf
 
+" FIXME ihsanturk#31: vip
 func! neuron#edit_zettel_new() " relying on https://github.com/srid/neuron
 	exec 'e '.system('neuron -d '.shellescape(g:zkdir).' new "PLACEHOLDER"')
 		\ .' | call search("PLACEHOLDER") | norm"_D'
