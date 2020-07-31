@@ -21,19 +21,35 @@ func! util#insert(thing)
 	put =a:thing
 endf
 
+func! util#cache_exists()
+	if !exists('g:cache_zettels')
+		return 0
+	elseif empty(g:cache_zettels)
+		return 0
+	elseif type(g:cache_zettels) != 4 " dictionary
+		return 0
+	else
+		return 1
+	end
+endf
+
 func! util#get_list_pair_zettelid_zetteltitle()
 	let l:final = []
-	for i in keys(g:cache_zettels)
-		call add(l:final, util#format_zettelid(i).':'.g:cache_zettels[i]['zettelTitle'])
-	endfor
-	return l:final
+	if util#cache_exists()
+		for i in keys(g:cache_zettels)
+			call add(l:final, util#format_zettelid(i).':'.g:cache_zettels[i]['zettelTitle'])
+		endfor
+		return l:final
+	else
+		call util#handlerr('E0')
+	end
 endf
 
 func! util#is_zettelid_valid(zettelid)
 	if empty(a:zettelid)
 		return 0
 	end
-	if !exists('g:cache_zettels') || empty('g:cache_zettels')
+	if !util#cache_exists()
 		call neuron#refresh_cache()
 	endif
 	if index(keys(g:cache_zettels), util#deform_zettelid(a:zettelid)) >= 0
@@ -100,17 +116,21 @@ func! util#get_file_modified_last(dir, extension)
 endf
 
 func! util#remove_orphans(title)
-	let l:count = 0
-	let l:targetdir = '/tmp/orphan-zettels'
-	call mkdir(l:targetdir, 'p')
-	for i in keys(g:cache_zettels)
-		if g:cache_zettels[i]['zettelTitle'] == a:title
-			call system("mv ".g:cache_zettels[i]['path']." ".l:targetdir)
-			let l:count += 1
-		end
-	endfor
-	echom l:count.' orphan zettels are moved to '.l:targetdir.'.'
-	echom 'You can manually delete '.l:targetdir.' directory.'
+	if util#cache_exists()
+		let l:count = 0
+		let l:targetdir = '/tmp/orphan-zettels/'
+		call mkdir(l:targetdir, 'p')
+		for i in keys(g:cache_zettels)
+			if g:cache_zettels[i]['zettelTitle'] == a:title
+				call system("mv ".g:zkdir.g:cache_zettels[i]['zettelPath']." ".l:targetdir)
+				let l:count += 1
+			end
+		endfor
+		echom l:count.' orphan zettels are moved to '.l:targetdir.'.'
+		echom 'You can manually delete '.l:targetdir.' directory.'
+	else
+		call util#handlerr('E0')
+	end
 endf
 
 func! util#handlerr(errcode)

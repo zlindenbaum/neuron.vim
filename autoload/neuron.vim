@@ -1,5 +1,5 @@
 func! neuron#insert_zettel_select()
-	if !exists('g:cache_zettels') || empty('g:cache_zettels')
+	if !util#cache_exists()
 		call neuron#refresh_cache()
 	endif
 	call fzf#run(fzf#wrap({
@@ -9,9 +9,25 @@ func! neuron#insert_zettel_select()
 	\ }))
 endf
 
+func! neuron#search_content(query, fullscreen)
+	let cmd_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
+	let initial_cmd = printf(cmd_fmt, shellescape(a:query))
+	let reload_cmd = printf(cmd_fmt, '{q}')
+	let spec = {'dir': g:zkdir,
+		\ 'options': [
+			\ '--phony',
+			\ '--query',
+			\ a:query,
+			\ '--bind',
+			\ 'change:reload:'.reload_cmd
+		\]
+	\}
+	call fzf#vim#grep(initial_cmd,1,fzf#vim#with_preview(spec),a:fullscreen)
+endf
+
 func! neuron#edit_zettel_select()
 	try
-		if !exists('g:cache_zettels') || empty('g:cache_zettels')
+		if !util#cache_exists()
 			call neuron#refresh_cache()
 		endif
 		call fzf#run(fzf#wrap({
@@ -32,7 +48,7 @@ endf
 
 func! neuron#insert_zettel_last()
 	try
-		if !exists('g:cache_zettels') || empty('g:cache_zettels')
+		if !util#cache_exists()
 			call util#handlerr('E0')
 		end
 	endtry
@@ -41,7 +57,7 @@ func! neuron#insert_zettel_last()
 endf
 
 func! neuron#edit_zettel_new() " relying on https://github.com/srid/neuron
-	exec 'e '.system('neuron new "PLACEHOLDER"')
+	exec 'e '.system('neuron -d '.shellescape(g:zkdir).' new "PLACEHOLDER"')
 		\ .' | call search("PLACEHOLDER") | norm"_D'
 	startinsert!
 	call neuron#refresh_cache()
@@ -58,7 +74,7 @@ endf
 
 func! neuron#get_zettel_title(zettel_id)
 	try
-		if !exists('g:cache_zettels') || empty('g:cache_zettels')
+		if !util#cache_exists()
 			call util#handlerr('E0')
 		endif
 	endtry
