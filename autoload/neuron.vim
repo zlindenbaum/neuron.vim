@@ -68,7 +68,12 @@ func! neuron#edit_zettel_under_cursor()
 	if util#is_zettelid_valid(l:zettel_id)
 		call neuron#edit_zettel(l:zettel_id)
 	else
-		call util#handlerr('E3')
+		let l:zettel_id = trim(expand('<cWORD>'), "<>")
+		if util#is_zettelid_valid(l:zettel_id)
+			call neuron#edit_zettel(l:zettel_id)
+		else
+			call util#handlerr('E3')
+		endif
 	endif
 endf
 
