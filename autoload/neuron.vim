@@ -58,7 +58,7 @@ endf
 
 " FIXME ihsanturk#31: vip
 func! neuron#edit_zettel_new() " relying on https://github.com/srid/neuron
-	exec 'e '.system('neuron -d '.shellescape(g:zkdir).' new "PLACEHOLDER"')
+	exec 'e '.s:run_neuron('new "PLACEHOLDER"')
 		\ .' | call search("PLACEHOLDER") | norm"_D'
 	startinsert!
 	call neuron#refresh_cache()
@@ -89,8 +89,7 @@ endf
 
 " TODO: Remove jq dependency find vimscript native solution.
 func! neuron#refresh_cache()
-	let l:neuron_output = s:run_neuron(
-		\ "-d ".shellescape(g:zkdir)." query --uri 'z:zettels'")
+	let l:neuron_output = s:run_neuron("query --uri 'z:zettels'")
 	let jq_output =
 		\ s:run_jq("'reduce .result[] as $i ({}; .[$i.zettelID]=$i)'",
 			\ l:neuron_output)
@@ -107,7 +106,7 @@ func! s:run_neuron(cmd)
 			call util#handlerr('E1')
 		endif
 	endtry
-	let l:cmdout = system(g:path_neuron.' '.a:cmd)
+	let l:cmdout = system(g:path_neuron.' -d '.shellescape(g:zkdir).' '.a:cmd)
 	if v:shell_error != 0
 		call s:warn(l:cmdout)
 		call util#handlerr('E5')
