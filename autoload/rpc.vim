@@ -7,7 +7,7 @@ func! rpc#start_server()
 		\ 'on_exit': function('s:on_exit'),
 	\}
 	if g:neuron_rib_job == -1
-		let g:neuron_rib_job = jobstart(['neuron', 'rib', '-wS'], options)
+		let g:neuron_rib_job = jobstart(['neuron', '-d', g:zkdir, 'rib', '-wS'], options)
 		echom 'Neuron rib server started.'
 	end
 	echom 'Opening http://127.0.0.1:8080/...'

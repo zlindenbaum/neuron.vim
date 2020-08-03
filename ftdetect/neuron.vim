@@ -1,5 +1,8 @@
 let g:zextension = get(g:, 'zextension', '.md')
 let g:zkdir = get(g:, 'zkdir', $HOME.'/zettelkasten/')
+if g:zkdir !~ "/$"
+	let g:zkdir = g:zkdir . '/'
+endif
 
 if exists('b:did_ftdetect') | finish | endif
 aug neuron
