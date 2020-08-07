@@ -24,6 +24,7 @@ If you want to use the `dev` branch to test the new features:
 ```vim
 Plug 'ihsanturk/neuron.vim', { 'branch': 'dev' }
 ```
+After saving your changes, remember to source your vimrc `:so $MYVIMRC` and run `:PlugInstall` to install the plugin code.
 
 ## Default Mappings
 ```vim
