@@ -37,7 +37,7 @@ func! util#get_list_pair_zettelid_zetteltitle()
 	let l:final = []
 	if util#cache_exists()
 		for i in keys(g:cache_zettels)
-			call add(l:final, util#format_zettelid(i).':'.g:cache_zettels[i]['zettelTitle'])
+			call add(l:final, i.':'.g:cache_zettels[i]['zettelTitle'])
 		endfor
 		return l:final
 	else
@@ -63,7 +63,7 @@ func! util#filter_zettels_in_line(line, ...)
 	let l:found = []
 	let l:n = get(a:, 1, -1)
 	for i in keys(g:cache_zettels)
-		let l:matched = util#deform_zettelid(matchstr(a:line, util#format_zettelid(i)))
+		let l:matched = matchstr(a:line, i)
 		if !empty(l:matched)
 			call add(l:found, l:matched)
 		end
@@ -76,18 +76,18 @@ func! util#filter_zettels_in_line(line, ...)
 endf
 
 func! util#deform_zettelid(zettelid)
-	if a:zettelid =~ "<.*>"
-		return substitute(a:zettelid, '<\([0-9a-zA-Z_-]\+\)\(?cf\)\?>', '\1', 'g')
+	if a:zettelid =~ "\[\[\[\?.*\]\]\]\?"
+		return substitute(a:zettelid, '\[\[\[\?\([0-9a-zA-Z_-]\+\)\(?cf\)\?\]\]\]\?', '\1', 'g')
 	else
 		return a:zettelid
 	end
 endf
 
 func! util#format_zettelid(zettelid)
-	if a:zettelid =~ "<.*>"
+	if a:zettelid =~ "\[\[\[\?.*\]\]\]\?"
 		return a:zettelid
 	else
-		return '<'.a:zettelid.'>'
+		return '[[['.a:zettelid.']]]'
 	end
 endf
 

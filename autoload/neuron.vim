@@ -64,11 +64,11 @@ func! neuron#edit_zettel_new() " relying on https://github.com/srid/neuron
 endf
 
 func! neuron#edit_zettel_under_cursor()
-	let l:zettel_id = expand('<cword>')
+	let l:zettel_id = trim(expand('<cword>'), "<>[]")
 	if util#is_zettelid_valid(l:zettel_id)
 		call neuron#edit_zettel(l:zettel_id)
 	else
-		let l:zettel_id = trim(expand('<cWORD>'), "<>")
+		let l:zettel_id = trim(expand('<cWORD>'), "<>[]")
 		if util#is_zettelid_valid(l:zettel_id)
 			call neuron#edit_zettel(l:zettel_id)
 		else
@@ -91,7 +91,7 @@ func! neuron#refresh_cache()
 	let l:neuron_output = s:run_neuron(
 		\ "-d ".shellescape(g:zkdir)." query --uri 'z:zettels'")
 	let jq_output =
-		\ s:run_jq("'reduce .result[] as $i ({}; .[$i.zettelID]=$i)'",
+		\ s:run_jq("'.result | map({value: ., key: .zettelID}) | from_entries'",
 			\ l:neuron_output)
 	let g:cache_zettels = json_decode(jq_output)
 endf

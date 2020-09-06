@@ -20,7 +20,7 @@ endf
 func! s:add_virtual_titles()
 	" TODO: Use util#filter_zettels_in_line function to get links.
 	" TODO: Get ids from cache.
-	let l:re_neuron_link = '<\([0-9a-zA-Z_-]\+\)\(?cf\)\?>'
+	let l:re_neuron_link = '\[\[\[\?\([0-9a-zA-Z_-]\+\)\(?cf\)\?\]\]\]\?'
 	if !exists('*nvim_buf_set_virtual_text')
 		return
 	endif
