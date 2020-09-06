@@ -91,7 +91,7 @@ func! neuron#refresh_cache()
 	let l:neuron_output = s:run_neuron(
 		\ "-d ".shellescape(g:zkdir)." query --uri 'z:zettels'")
 	let jq_output =
-		\ s:run_jq("'.result | map({value: ., key: .zettelID}) | from_entries'",
+		\ s:run_jq("'.result | map({value: (.zettelTitle = (.zettelTitle | gsub(\":\"; \"-\"))), key: .zettelID}) | from_entries'",
 			\ l:neuron_output)
 	let g:cache_zettels = json_decode(jq_output)
 endf
