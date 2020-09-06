@@ -133,7 +133,7 @@ func! s:expand_zettel_id(zettel_id)
 endf
 
 func! s:get_zettel_last()
-	return util#get_file_modified_last(g:zkdir, g:zextension)
+	return util#get_file_modified_last(g:zkdir, g:zextension, expand('%s'))
 endf
 
 func! s:warn(msg)
