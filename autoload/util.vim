@@ -18,7 +18,7 @@ func! util#is_current_buf_zettel()
 endf
 
 func! util#insert(thing)
-	put =a:thing
+	execute "normal! a".a:thing
 endf
 
 func! util#cache_exists()
