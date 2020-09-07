@@ -16,13 +16,8 @@ help of [neuron](https://github.com/srid/neuron) in {n}vim.
 ```vim
 Plug 'junegunn/fzf.vim'
 Plug 'BurntSushi/ripgrep'
+Plug 'fiatjaf/neuron.vim'
 ```
-```vim
-Plug 'ihsanturk/neuron.vim'
-```
-If you want to use the `dev` branch to test the new features:
-```vim
-Plug 'ihsanturk/neuron.vim', { 'branch': 'dev' }
 ```
 After saving your changes, remember to source your vimrc `:so $MYVIMRC` and run `:PlugInstall` to install the plugin code.
 
@@ -43,6 +38,14 @@ You can disable the mappings with letting the `g:neuron_no_mappings` variable to
 let g:neuron_no_mappings = 1
 ```
 
+## Differences from `ihsanturk/neuron.vim`
+
+1. Recognize and insert links using the new `[[[...]]]` syntax instead of `<...>`;
+2. Replace `:` with `-` in zettel titles search view so vim/fzf don't break these;
+3. `gzi`/`gzl` insert at the cursor, not in their own line followed by a newline;
+4. `gzl` doesn't start a new zettel in insert mode, start in normal mode;
+5. `gzu/gzl` go back to the previously visited zettel instead of the previously edited zettel.
+
 ## Caveats, Gotchas and Further Explanation
 
 The "**virtual titles**" displayed alongside the zettel IDs in the screenshot above will only work if using neovim. Standard vim does not support this.
@@ -52,16 +55,12 @@ There is no mapping for `:NeuronRibStop` you can stop the server by:
 or
 - leaving the vim session (vim will stop the process automatically)
 
-**Common actions and their default mappings:**  
-- To search zettels by title: `gzz` (entering the "select a zettel to edit" UI is synonymous with search.)
+**Common actions and their default mappings:**
+- To search zettels by title: `gzz` (entering the "select a zettel to edit" UI is synonymous with search)
 - Create a new zettel with a random ID filename and open it for editing: `gzn`
 - Search for a zettel to insert as a link at the current cursor position: `gzi`
 - Add a link at the cursor position to the last zettel viewed: `gzl`
+- Open zettel under the cursor: `gzo`
 - Go back to edit the last zettel viewed: `gzu`
 
 _Note: The last three mappings work nicely together as a workflow for making connections_.
-
-## Donate
-- Bitcoin: `1JmTyije6qxKLRWLyKeUk7DhbUTU9RMBPu`
-- USDT: `0xd6af1842c4a1a56ee3494deea57bcbae44af02a9`
-- Ethereum: `0xf32A82328fF44009E7419A15E22aCE1A3553aD56`
