@@ -111,15 +111,6 @@ func! util#edit_shrink_fzf(line)
 	call neuron#edit_zettel(util#filter_zettels_in_line(a:line, 0))
 endf
 
-func! util#get_file_modified_last(dir, extension, current)
-	let l:cmdout = system('ls -t '.shellescape(a:dir).'*'.a:extension.' | head -2')
-	for f in split(l:cmdout, '\n')
-		if f != a:current
-			return f
-		end
-	end
-endf
-
 func! util#remove_orphans(title)
 	if util#cache_exists()
 		let l:count = 0

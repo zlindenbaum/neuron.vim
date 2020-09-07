@@ -43,7 +43,9 @@ func! neuron#edit_zettel_select()
 endf
 
 func! neuron#edit_zettel_last()
-	exec 'e '.s:get_zettel_last()
+	let l:file = s:get_zettel_last()
+	let w:last = expand('%s')
+	exec 'edit '.l:file
 endf
 
 func! neuron#insert_zettel_last()
@@ -57,7 +59,8 @@ func! neuron#insert_zettel_last()
 endf
 
 func! neuron#edit_zettel_new() " relying on https://github.com/srid/neuron
-	exec 'e '.system('neuron -d '.shellescape(g:zkdir).' new "PLACEHOLDER"')
+	let w:last = expand('%s')
+	exec 'edit '.system('neuron -d '.shellescape(g:zkdir).' new "PLACEHOLDER"')
 		\ .' | call search("PLACEHOLDER") | norm"_D'
 	call neuron#refresh_cache()
 endf
@@ -96,6 +99,7 @@ func! neuron#refresh_cache()
 endf
 
 func! neuron#edit_zettel(zettel_id)
+	let w:last = expand('%s')
 	exec 'edit '.s:expand_zettel_id(a:zettel_id)
 endf
 
@@ -132,7 +136,7 @@ func! s:expand_zettel_id(zettel_id)
 endf
 
 func! s:get_zettel_last()
-	return util#get_file_modified_last(g:zkdir, g:zextension, expand('%s'))
+	return w:last
 endf
 
 func! s:warn(msg)
