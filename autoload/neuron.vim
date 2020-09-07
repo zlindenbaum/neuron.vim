@@ -59,7 +59,6 @@ endf
 func! neuron#edit_zettel_new() " relying on https://github.com/srid/neuron
 	exec 'e '.system('neuron -d '.shellescape(g:zkdir).' new "PLACEHOLDER"')
 		\ .' | call search("PLACEHOLDER") | norm"_D'
-	startinsert!
 	call neuron#refresh_cache()
 endf
 
