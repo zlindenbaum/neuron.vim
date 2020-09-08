@@ -49,6 +49,7 @@ let g:neuron_no_mappings = 1
 5. `gzu/gzl` use the previously visited zettel instead of the previously edited zettel.
 6. `gzi/gzl` insert normal links, `gzI/gzL` insert folgezettel links (`[[[...]]]`).
 7. When inserting, existing `[[]]` (and variants) under the cursor will be erased first.
+8. Try to determine `g:zkdir` by searching the path backwards for a `neuron.dhall`.
 
 ## Caveats, Gotchas and Further Explanation
 

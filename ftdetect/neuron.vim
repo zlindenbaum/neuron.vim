@@ -1,6 +1,17 @@
 let g:zextension = get(g:, 'zextension', '.md')
 let g:zkdir = get(g:, 'zkdir', $HOME.'/zettelkasten/')
 
+" search for neuron.dhall
+let s:current = expand("%:p")
+let s:dir = fnamemodify(s:current, ":h:r")
+while s:dir != "/"
+	if filereadable(s:dir."/neuron.dhall")
+		let g:zkdir = s:dir."/"
+		break
+	endif
+	let s:dir = fnamemodify(s:dir, ":h:r")
+endwhile
+
 if exists('b:did_ftdetect') | finish | endif
 aug neuron
 	exec ':au! BufRead,BufNewFile '.g:zkdir.'*'.g:zextension.' call s:set_filetype()'
