@@ -17,8 +17,21 @@ func! util#is_current_buf_zettel()
 	end
 endf
 
-func! util#insert(thing)
-	execute "normal! a".a:thing
+func! util#insert(zettelid, as_folgezettel)
+	if a:as_folgezettel
+		let l:formatted = "[[[".a:zettelid."]]]"
+	else
+		let l:formatted = "[[".a:zettelid."]]"
+	endif
+
+	let l:word_under = expand('<cword>')
+	if !empty(l:word_under) && empty(trim(l:word_under, "[]<>"))
+		" erase things like '[[]]' before adding
+		execute "normal! diwi".l:formatted
+	else
+		execute "normal! a".l:formatted
+	endif
+
 endf
 
 func! util#cache_exists()
@@ -59,20 +72,14 @@ func! util#is_zettelid_valid(zettelid)
 	end
 endf
 
-func! util#filter_zettels_in_line(line, ...)
-	let l:found = []
-	let l:n = get(a:, 1, -1)
+func! util#get_zettel_in_line(line)
 	for i in keys(g:cache_zettels)
 		let l:matched = matchstr(a:line, i)
 		if !empty(l:matched)
-			call add(l:found, l:matched)
+			return l:matched
 		end
 	endfor
-	if l:n < 0 " index given as optional arg in
-		return l:found " list
-	else
-		return l:found[l:n] " string
-	end
+	return ""
 endf
 
 func! util#deform_zettelid(zettelid)
@@ -83,32 +90,16 @@ func! util#deform_zettelid(zettelid)
 	end
 endf
 
-func! util#format_zettelid(zettelid)
-	if a:zettelid =~ "\[\[\[\?.*\]\]\]\?"
-		return a:zettelid
-	else
-		return '[[['.a:zettelid.']]]'
-	end
-endf
-
-" (line, [nth])
-func! util#get_formatted_zettelid(line, ...)
-	let l:n = get(a:, 1, 0)
-	let l:found = util#filter_zettels_in_line(a:line)
-	try
-		if len(l:found) <= l:n
-			call util#handlerr('E4')
-		end
-	endtry
-	return util#format_zettelid(l:found[l:n])
-endf
-
 func! util#insert_shrink_fzf(line)
-	call util#insert(util#get_formatted_zettelid(a:line, 0))
+	call util#insert(util#get_zettel_in_line(a:line), 0)
+endf
+
+func! util#insert_shrink_fzf_folgezettel(line)
+	call util#insert(util#get_zettel_in_line(a:line), 1)
 endf
 
 func! util#edit_shrink_fzf(line)
-	call neuron#edit_zettel(util#filter_zettels_in_line(a:line, 0))
+	call neuron#edit_zettel(util#get_zettel_in_line(a:line))
 endf
 
 func! util#remove_orphans(title)

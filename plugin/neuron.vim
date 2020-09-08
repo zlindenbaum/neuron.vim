@@ -26,22 +26,22 @@ nm <silent> <Plug>EditZettelSearchContent :<C-U>NeuronSearchContent<cr>
 nm <silent> <Plug>EditZettelLast :<C-U>call neuron#edit_zettel_last()<cr>
 nm <silent> <Plug>NeuronRefreshCache :<C-U>call neuron#refresh_cache()<cr>
 nm <silent> <Plug>EditZettelSelect :<C-U>call neuron#edit_zettel_select()<cr>
-nm <silent> <Plug>InsertZettelLast :<C-U>call neuron#insert_zettel_last()<cr>
-nm <silent> <Plug>InsertZettelSelect
-			\ :<C-U>call neuron#insert_zettel_select()<cr>
-nm <silent> <Plug>EditZettelUnderCursor
-			\ :<C-U>call neuron#edit_zettel_under_cursor()<cr>
+nm <silent> <Plug>EditZettelUnderCursor :<C-U>call neuron#edit_zettel_under_cursor()<cr>
+nm <silent> <Plug>InsertZettelLast :<C-U>call neuron#insert_zettel_last(0)<cr>
+nm <silent> <Plug>InsertZettelSelect :<C-U>call neuron#insert_zettel_select(0)<cr>
 
 if !exists("g:neuron_no_mappings") || ! g:neuron_no_mappings
-	nm gzn <Plug>EditZettelNew
 	nm gzb <Plug>NeuronRibStart
-	nm gzu <Plug>EditZettelLast
-	nm gzl <Plug>InsertZettelLast
-	nm gzz <Plug>EditZettelSelect
-	nm gzi <Plug>InsertZettelSelect
 	nm gzr <Plug>NeuronRefreshCache
+	nm gzn <Plug>EditZettelNew
+	nm gzu <Plug>EditZettelLast
+	nm gzz <Plug>EditZettelSelect
 	nm gzo <Plug>EditZettelUnderCursor
 	nm gzs <Plug>EditZettelSearchContent
+	nm gzl <Plug>InsertZettelLast
+	nm gzi <Plug>InsertZettelSelect
+	nm gzL :<C-U>call neuron#insert_zettel_last(1)<cr>
+	nm gzI :<C-U>call neuron#insert_zettel_select(1)<cr>
 end
 
 com! NeuronRibStart :call rpc#start_server()

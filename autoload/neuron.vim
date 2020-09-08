@@ -1,11 +1,17 @@
-func! neuron#insert_zettel_select()
+func! neuron#insert_zettel_select(as_folgezettel)
 	if !util#cache_exists()
 		call neuron#refresh_cache()
 	endif
+	if a:as_folgezettel
+		let l:sink_to_use = 'util#insert_shrink_fzf_folgezettel'
+	else
+		let l:sink_to_use = 'util#insert_shrink_fzf'
+	endif
+
 	call fzf#run(fzf#wrap({
 		\ 'options': extend(deepcopy(g:fzf_options),['--prompt','Insert Zettel ID: ']),
 		\ 'source': util#get_list_pair_zettelid_zetteltitle(),
-		\ 'sink': function('util#insert_shrink_fzf'),
+		\ 'sink': function(l:sink_to_use),
 	\ }))
 endf
 
@@ -48,14 +54,15 @@ func! neuron#edit_zettel_last()
 	exec 'edit '.l:file
 endf
 
-func! neuron#insert_zettel_last()
+func! neuron#insert_zettel_last(as_folgezettel)
 	try
 		if !util#cache_exists()
 			call util#handlerr('E0')
 		end
 	endtry
-	call util#insert(
-		\ util#format_zettelid(fnamemodify(s:get_zettel_last(), ':t:r')))
+
+	let l:zettelid = fnamemodify(s:get_zettel_last(), ':t:r')
+	call util#insert(l:zettelid, a:as_folgezettel)
 endf
 
 func! neuron#edit_zettel_new() " relying on https://github.com/srid/neuron

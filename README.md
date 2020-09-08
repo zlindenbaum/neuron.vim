@@ -24,13 +24,15 @@ After saving your changes, remember to source your vimrc `:so $MYVIMRC` and run 
 ## Default Mappings
 ```vim
 nm gzn <Plug>EditZettelNew
-nm gzb <Plug>NeuronRibStart
-nm gzu <Plug>EditZettelLast
-nm gzl <Plug>InsertZettelLast
 nm gzz <Plug>EditZettelSelect
-nm gzi <Plug>InsertZettelSelect
-nm gzr <Plug>NeuronRefreshCache
 nm gzo <Plug>EditZettelUnderCursor
+nm gzu <Plug>EditZettelLast
+nm gzi <Plug>InsertZettelSelect
+nm gzl <Plug>InsertZettelLast
+nm gzI insert selected zettel as folgezettel [[[...]]]
+nm gzL insert last zettel as folgezettel [[[...]]]
+nm gzb <Plug>NeuronRibStart
+nm gzr <Plug>NeuronRefreshCache
 ```
 You can disable the mappings with letting the `g:neuron_no_mappings` variable to
 1:
@@ -40,11 +42,13 @@ let g:neuron_no_mappings = 1
 
 ## Differences from `ihsanturk/neuron.vim`
 
-1. Recognize and insert links using the new `[[[...]]]` syntax instead of `<...>`;
+1. Recognize and insert links using the new `[[...]]` syntax instead of `<...>`;
 2. Replace `:` with `-` in zettel titles search view so vim/fzf don't break these;
 3. `gzi`/`gzl` insert at the cursor, not in their own line followed by a newline;
 4. `gzl` doesn't start a new zettel in insert mode, start in normal mode;
-5. `gzu/gzl` go back to the previously visited zettel instead of the previously edited zettel.
+5. `gzu/gzl` use the previously visited zettel instead of the previously edited zettel.
+6. `gzi/gzl` insert normal links, `gzI/gzL` insert folgezettel links (`[[[...]]]`).
+7. When inserting, existing `[[]]` (and variants) under the cursor will be erased first.
 
 ## Caveats, Gotchas and Further Explanation
 
