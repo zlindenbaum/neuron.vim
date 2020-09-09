@@ -49,13 +49,6 @@ com! NeuronRibStop  :call rpc#stop_server()
 com! -nargs=* -bang NeuronSearchContent call neuron#search_content(<q-args>, <bang>0)
 
 let g:neuron_errors = {
-	\ 'E0': {
-		\ 'problem': 'g:cache_zettels not found',
-		\ 'suggestions': [
-			\ 'press: `gzr` to refresh the cache',
-			\ 'run `:call neuron#refresh_cache()`',
-		\ ],
-	\ },
 	\ 'E1': {
 		\ 'problem': "neuron not found",
 		\ 'suggestions': [
@@ -72,12 +65,8 @@ let g:neuron_errors = {
 		\ 'problem': "no such zettel",
 		\ 'suggestions': [],
 	\ },
-	\ 'E4': {
-		\ 'problem': "can't find any zettelids in the line",
-		\ 'suggestions': [],
-	\ },
-	\ 'E5': {
-		\ 'problem': "external command failed",
+	\ 'E6': {
+		\ 'problem': "no file was visited before this one",
 		\ 'suggestions': [],
 	\ },
 \ }

@@ -1,7 +1,27 @@
-func! neuron#insert_zettel_select(as_folgezettel)
-	if !util#cache_exists()
-		call neuron#refresh_cache()
+func! neuron#add_virtual_titles()
+	if !exists('*nvim_buf_set_virtual_text')
+		return
 	endif
+	let l:ns = nvim_create_namespace('neuron')
+	call nvim_buf_clear_namespace(0, l:ns, 0, -1)
+	let l:re_neuron_link = '\[\[\[\?\([0-9a-zA-Z_-]\+\)\(?cf\)\?\]\]\]\?'
+	let l:lnum = -1
+	for line in getline(1, "$")
+		let l:lnum += 1
+		let l:zettel_id = util#get_zettel_in_line(line)
+		if empty(l:zettel_id)
+			continue
+		endif
+		let l:title = w:cache_titles[l:zettel_id]
+		" TODO: Use
+		" nvim_buf_set_extmark({buffer}, {ns_id}, {id}, {line}, {col}, {opts})
+		" function instead of nvim_buf_set_virtual_text. Check this link for
+		" help https://github.com/neovim/neovim/blob/e628a05b51d4620e91662f857d29f1ac8fc67862/runtime/doc/api.txt#L1935-L1955
+		call nvim_buf_set_virtual_text(0, l:ns, l:lnum, [[l:title, g:style_virtual_title]], {})
+	endfor
+endf
+
+func! neuron#insert_zettel_select(as_folgezettel)
 	if a:as_folgezettel
 		let l:sink_to_use = 'util#insert_shrink_fzf_folgezettel'
 	else
@@ -10,7 +30,7 @@ func! neuron#insert_zettel_select(as_folgezettel)
 
 	call fzf#run(fzf#wrap({
 		\ 'options': extend(deepcopy(g:fzf_options),['--prompt','Insert Zettel ID: ']),
-		\ 'source': util#get_list_pair_zettelid_zetteltitle(),
+		\ 'source': w:list_pair_zettelid_zetteltitle,
 		\ 'sink': function(l:sink_to_use),
 	\ }))
 endf
@@ -33,12 +53,9 @@ endf
 
 func! neuron#edit_zettel_select()
 	try
-		if !util#cache_exists()
-			call neuron#refresh_cache()
-		endif
 		call fzf#run(fzf#wrap({
 			\ 'options': extend(deepcopy(g:fzf_options),['--prompt','Edit Zettel: ']),
-			\ 'source': util#get_list_pair_zettelid_zetteltitle(),
+			\ 'source': w:list_pair_zettelid_zetteltitle,
 			\ 'sink': function('util#edit_shrink_fzf'),
 		\ }))
 	catch /^jq not found/
@@ -49,19 +66,23 @@ func! neuron#edit_zettel_select()
 endf
 
 func! neuron#edit_zettel_last()
-	let l:file = s:get_zettel_last()
+	if !exists("w:last")
+		call util#handlerr('E6')
+		return
+	end
+
+	let l:file = w:last
 	let w:last = expand('%s')
 	exec 'edit '.l:file
 endf
 
 func! neuron#insert_zettel_last(as_folgezettel)
-	try
-		if !util#cache_exists()
-			call util#handlerr('E0')
-		end
-	endtry
+	if !exists("w:last")
+		call util#handlerr('E6')
+		return
+	end
 
-	let l:zettelid = fnamemodify(s:get_zettel_last(), ':t:r')
+	let l:zettelid = fnamemodify(w:last, ':t:r')
 	call util#insert(l:zettelid, a:as_folgezettel)
 endf
 
@@ -69,7 +90,6 @@ func! neuron#edit_zettel_new() " relying on https://github.com/srid/neuron
 	let w:last = expand('%s')
 	exec 'edit '.system('neuron -d '.shellescape(g:zkdir).' new "PLACEHOLDER"')
 		\ .' | call search("PLACEHOLDER") | norm"_D'
-	call neuron#refresh_cache()
 endf
 
 func! neuron#edit_zettel_under_cursor()
@@ -86,64 +106,77 @@ func! neuron#edit_zettel_under_cursor()
 	endif
 endf
 
-func! neuron#get_zettel_title(zettel_id)
-	try
-		if !util#cache_exists()
-			call util#handlerr('E0')
-		endif
-	endtry
-	return g:cache_zettels[a:zettel_id]['zettelTitle']
-endf
-
-" TODO: Remove jq dependency find vimscript native solution.
-func! neuron#refresh_cache()
-	let l:neuron_output = s:run_neuron(
-		\ "-d ".shellescape(g:zkdir)." query --uri 'z:zettels'")
-	let jq_output =
-		\ s:run_jq("'.result | map({value: (.zettelTitle = (.zettelTitle | gsub(\":\"; \"-\"))), key: .zettelID}) | from_entries'",
-			\ l:neuron_output)
-	let g:cache_zettels = json_decode(jq_output)
-endf
-
 func! neuron#edit_zettel(zettel_id)
 	let w:last = expand('%s')
 	exec 'edit '.s:expand_zettel_id(a:zettel_id)
 endf
 
-func! s:run_neuron(cmd)
+func! neuron#refresh_cache()
 	try
 		if !executable(g:path_neuron)
 			call util#handlerr('E1')
 		endif
-	endtry
-	let l:cmdout = system(g:path_neuron.' '.a:cmd)
-	if v:shell_error != 0
-		call s:warn(l:cmdout)
-		call util#handlerr('E5')
-	end
-	return l:cmdout
-endf
-
-func! s:run_jq(cmd, data)
-	try
 		if !executable(g:path_jq)
 			call util#handlerr('E2')
 		endif
 	endtry
-	let l:cmdout = system(g:path_jq.' '.a:cmd, a:data)
-	if v:shell_error != 0
-		call s:warn(l:cmdout)
-		call util#handlerr('E5')
-	end
-	return l:cmdout
+
+	let l:cmd = [g:path_neuron, "-d", g:zkdir, "query", "--uri", "z:zettels"]
+	if has('nvim')
+		call jobstart(l:cmd, {
+			\ 'on_stdout': function('s:refresh_cache_callback'),
+			\ 'stdout_buffered': 1
+		\ })
+	elseif 1 == 2
+		" vim 8 async jobs do not work for now
+		let l:jobopt = {
+			\ 'close_cb': function('s:refresh_cache_callback_vim'),
+			\ 'out_mode': 'raw',
+			\ 'out_io': 'buffer',
+			\ 'out_name': 'neuronzettelsbuffer',
+			\ 'err_io': 'out'
+		\ }
+		if has('patch-8.1.350')
+			let l:jobopt['noblock'] = 1
+		endif
+		call job_start(l:cmd, l:jobopt)
+	else
+		let l:cmd[2] = shellescape(g:zkdir)
+		let l:data = system(join(cmd))
+		call s:refresh_cache_callback(l:data)
+	endif
+endf
+
+" vim 8
+func! s:refresh_cache_callback_vim(channel)
+	let l:data = getbufline('neuronzettelsbuffer', 2, '$')
+	bw bufnr('neuronzettelsbuffer')
+	call s:refresh_cache_callback(join(l:data))
+endf
+
+" neovim
+func s:refresh_cache_callback_nvim(id, data, event)
+	call s:refresh_cache_callback(join(a:data))
+endf
+
+func! s:refresh_cache_callback(data)
+	let l:zettels = json_decode(a:data)["result"]
+
+	let w:cache_titles = {}
+	let w:cache_zettels = []
+	let w:list_pair_zettelid_zetteltitle = []
+
+	for z in l:zettels
+		let w:cache_titles[z['zettelID']] = z['zettelTitle']
+		let w:cache_zettels = add(w:cache_zettels, { 'id': z['zettelID'], 'title': z['zettelTitle'], 'path': z['zettelPath'] })
+		let w:list_pair_zettelid_zetteltitle = add(w:list_pair_zettelid_zetteltitle, z['zettelID'].":".z['zettelTitle'])
+	endfor
+
+ 	call neuron#add_virtual_titles()
 endf
 
 func! s:expand_zettel_id(zettel_id)
 	return g:zkdir . a:zettel_id . g:zextension
-endf
-
-func! s:get_zettel_last()
-	return w:last
 endf
 
 func! s:warn(msg)

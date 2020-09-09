@@ -1,22 +1,3 @@
-func! util#get_platform() abort
-	if has('win32') || has('win64')
-		return 'win'
-	elseif has('mac') || has('macvim')
-		return 'macos'
-	else
-		return 'linux'
-	endif
-endf
-
-func! util#is_current_buf_zettel()
-	" TODO: Use filetypes instead with au commands and ftdetect/ folder.
-	if expand('%:p') =~ g:zkdir.'.*'.g:zextension
-		return v:true
-	else
-		return v:false
-	end
-endf
-
 func! util#insert(zettelid, as_folgezettel)
 	if a:as_folgezettel
 		let l:formatted = "[[[".a:zettelid."]]]"
@@ -34,38 +15,11 @@ func! util#insert(zettelid, as_folgezettel)
 
 endf
 
-func! util#cache_exists()
-	if !exists('g:cache_zettels')
-		return 0
-	elseif empty(g:cache_zettels)
-		return 0
-	elseif type(g:cache_zettels) != 4 " dictionary
-		return 0
-	else
-		return 1
-	end
-endf
-
-func! util#get_list_pair_zettelid_zetteltitle()
-	let l:final = []
-	if util#cache_exists()
-		for i in keys(g:cache_zettels)
-			call add(l:final, i.':'.g:cache_zettels[i]['zettelTitle'])
-		endfor
-		return l:final
-	else
-		call util#handlerr('E0')
-	end
-endf
-
 func! util#is_zettelid_valid(zettelid)
 	if empty(a:zettelid)
 		return 0
 	end
-	if !util#cache_exists()
-		call neuron#refresh_cache()
-	endif
-	if index(keys(g:cache_zettels), util#deform_zettelid(a:zettelid)) >= 0
+	if !get(w:cache_titles, util#deform_zettelid(a:zettelid))
 		return 1
 	else
 		return 0
@@ -73,8 +27,8 @@ func! util#is_zettelid_valid(zettelid)
 endf
 
 func! util#get_zettel_in_line(line)
-	for i in keys(g:cache_zettels)
-		let l:matched = matchstr(a:line, i)
+	for zettel in w:cache_zettels
+		let l:matched = matchstr(a:line, zettel['id'])
 		if !empty(l:matched)
 			return l:matched
 		end
@@ -103,21 +57,17 @@ func! util#edit_shrink_fzf(line)
 endf
 
 func! util#remove_orphans(title)
-	if util#cache_exists()
-		let l:count = 0
-		let l:targetdir = '/tmp/orphan-zettels/'
-		call mkdir(l:targetdir, 'p')
-		for i in keys(g:cache_zettels)
-			if g:cache_zettels[i]['zettelTitle'] == a:title
-				call system("mv ".g:zkdir.g:cache_zettels[i]['zettelPath']." ".l:targetdir)
-				let l:count += 1
-			end
-		endfor
-		echom l:count.' orphan zettels are moved to '.l:targetdir.'.'
-		echom 'You can manually delete '.l:targetdir.' directory.'
-	else
-		call util#handlerr('E0')
-	end
+	let l:count = 0
+	let l:targetdir = '/tmp/orphan-zettels/'
+	call mkdir(l:targetdir, 'p')
+	for zettel in w:cache_zettels
+		if zettel['title'] == a:title
+			call system("mv ".g:zkdir.zettel['path']." ".l:targetdir)
+			let l:count += 1
+		end
+	endfor
+	echom l:count.' orphan zettels are moved to '.l:targetdir.'.'
+	echom 'You can manually delete '.l:targetdir.' directory.'
 endf
 
 func! util#handlerr(errcode)
