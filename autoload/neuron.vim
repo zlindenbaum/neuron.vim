@@ -52,17 +52,11 @@ func! neuron#search_content(query, fullscreen)
 endf
 
 func! neuron#edit_zettel_select()
-	try
-		call fzf#run(fzf#wrap({
-			\ 'options': extend(deepcopy(g:fzf_options),['--prompt','Edit Zettel: ']),
-			\ 'source': w:list_pair_zettelid_zetteltitle,
-			\ 'sink': function('util#edit_shrink_fzf'),
-		\ }))
-	catch /^jq not found/
-		call s:warn("Add: let g:path_jq = 'path/to/jq' to your vimrc.")
-	catch /^neuron not found/
-		call s:warn("Add: let g:path_neuron = 'path/to/neuron' to your vimrc")
-	endtry
+	call fzf#run(fzf#wrap({
+		\ 'options': extend(deepcopy(g:fzf_options),['--prompt','Edit Zettel: ']),
+		\ 'source': w:list_pair_zettelid_zetteltitle,
+		\ 'sink': function('util#edit_shrink_fzf'),
+	\ }))
 endf
 
 func! neuron#edit_zettel_last()
@@ -115,9 +109,6 @@ func! neuron#refresh_cache()
 	try
 		if !executable(g:path_neuron)
 			call util#handlerr('E1')
-		endif
-		if !executable(g:path_jq)
-			call util#handlerr('E2')
 		endif
 	endtry
 

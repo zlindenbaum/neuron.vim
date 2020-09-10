@@ -21,9 +21,6 @@ g:zkdir                 Zettelkasten directory. Default: >
 g:fzf_options           Change the fzf parameters. Default: >
                         let g:fzf_options = ['-d',':','--with-nth','2']
 
-g:path_jq               Path to jq. Default >
-                        let g:path_jq = system('which jq | tr -d "\n"')
-
 g:path_neuron           Path to neuron. Default >
                         let g:path_neuron = system('which neuron | tr -d "\n"')
 
