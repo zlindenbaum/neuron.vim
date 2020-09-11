@@ -110,3 +110,13 @@ func! util#get_fzf_options()
 		\ '--preview', "echo {} | sed 's/:.*/".l:ext."/' | xargs fold -w ".l:ncol." -s"
 	\ ])
 endf
+
+func! util#get_visual_selection()
+	try
+		let l:a_save = @a
+		silent! normal! gv"ay
+		return @a
+	finally
+		let @a = l:a_save
+	endtry
+endf
