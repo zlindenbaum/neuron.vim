@@ -49,6 +49,8 @@ let g:neuron_no_mappings = 1
 6. `gzi/gzl` insert normal links, `gzI/gzL` insert folgezettel links (`[[[...]]]`).
 7. When inserting, existing `[[]]` (and variants) under the cursor will be erased first.
 8. Try to determine `g:zkdir` by searching the path backwards for a `neuron.dhall`.
+9. Different timing for refresh cache and async jobs.
+10. Zettels sorted by date on `gzz/gzi` search (newest zettels seen first).
 
 ## Caveats, Gotchas and Further Explanation
 

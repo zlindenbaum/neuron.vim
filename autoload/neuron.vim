@@ -151,6 +151,8 @@ endf
 func! s:refresh_cache_callback(data)
 	let l:zettels = json_decode(a:data)["result"]
 
+	call sort(l:zettels, function('util#zettel_date_sorter'))
+
 	let w:cache_titles = {}
 	let w:cache_zettels = []
 	let w:list_pair_zettelid_zetteltitle = []
@@ -158,6 +160,7 @@ func! s:refresh_cache_callback(data)
 	for z in l:zettels
 		let w:cache_titles[z['zettelID']] = z['zettelTitle']
 		let w:cache_zettels = add(w:cache_zettels, { 'id': z['zettelID'], 'title': z['zettelTitle'], 'path': z['zettelPath'] })
+
 		let w:list_pair_zettelid_zetteltitle = add(w:list_pair_zettelid_zetteltitle, z['zettelID'].":".z['zettelTitle'])
 	endfor
 

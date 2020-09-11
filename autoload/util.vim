@@ -80,3 +80,23 @@ func! util#handlerr(errcode)
 	end
 	echoerr l:errmsg
 endf
+
+func! util#zettel_date_sorter(a, b)
+	let l:ad = util#zettel_date_getter(a:a)
+	let l:bd = util#zettel_date_getter(a:b)
+	if l:ad == l:bd
+		return 0
+	elseif l:ad > l:bd
+		return -1
+	else
+		return 1
+	endif
+endf
+
+func! util#zettel_date_getter(z)
+	let l:date = get(a:z, 'zettelDate', ['1970-01-01'])
+	if type(l:date) != type([])
+		let l:date = ['1970-01-01']
+	endif
+	return join(l:date)
+endf
