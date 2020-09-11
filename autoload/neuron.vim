@@ -115,16 +115,14 @@ func! neuron#refresh_cache()
 	let l:cmd = [g:path_neuron, "-d", g:zkdir, "query", "--uri", "z:zettels"]
 	if has('nvim')
 		call jobstart(l:cmd, {
-			\ 'on_stdout': function('s:refresh_cache_callback'),
+			\ 'on_stdout': function('s:refresh_cache_callback_nvim'),
 			\ 'stdout_buffered': 1
 		\ })
-	elseif 1 == 2
-		" vim 8 async jobs do not work for now
+	elseif has('job')
 		let l:jobopt = {
-			\ 'close_cb': function('s:refresh_cache_callback_vim'),
-			\ 'out_mode': 'raw',
-			\ 'out_io': 'buffer',
-			\ 'out_name': 'neuronzettelsbuffer',
+			\ 'exit_cb': function('s:refresh_cache_callback_vim'),
+			\ 'out_io': 'file',
+			\ 'out_name': '/tmp/neuronzettelsbuffer',
 			\ 'err_io': 'out'
 		\ }
 		if has('patch-8.1.350')
@@ -139,9 +137,9 @@ func! neuron#refresh_cache()
 endf
 
 " vim 8
-func! s:refresh_cache_callback_vim(channel)
-	let l:data = getbufline('neuronzettelsbuffer', 2, '$')
-	bw bufnr('neuronzettelsbuffer')
+func! s:refresh_cache_callback_vim(channel, x)
+	let l:data = readfile("/tmp/neuronzettelsbuffer")
+	call job_start("rm /tmp/neuronzettelsbuffer")
 	call s:refresh_cache_callback(join(l:data))
 endf
 
