@@ -51,6 +51,7 @@ let g:neuron_no_mappings = 1
 8. Try to determine `g:zkdir` by searching the path backwards for a `neuron.dhall`.
 9. Different timing for refresh cache and async jobs.
 10. Zettels sorted by date on `gzz/gzi` search (newest zettels seen first).
+11. Preview windows from `gzz/gzi`.
 
 ## Caveats, Gotchas and Further Explanation
 

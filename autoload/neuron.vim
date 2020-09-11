@@ -29,7 +29,7 @@ func! neuron#insert_zettel_select(as_folgezettel)
 	endif
 
 	call fzf#run(fzf#wrap({
-		\ 'options': extend(deepcopy(g:fzf_options),['--prompt','Insert Zettel ID: ']),
+		\ 'options': util#get_fzf_options(),
 		\ 'source': w:list_pair_zettelid_zetteltitle,
 		\ 'sink': function(l:sink_to_use),
 	\ }, g:neuron_fullscreen_search))
@@ -53,7 +53,7 @@ endf
 
 func! neuron#edit_zettel_select()
 	call fzf#run(fzf#wrap({
-		\ 'options': extend(deepcopy(g:fzf_options),['--prompt','Edit Zettel: ']),
+		\ 'options': util#get_fzf_options(),
 		\ 'source': w:list_pair_zettelid_zetteltitle,
 		\ 'sink': function('util#edit_shrink_fzf'),
 	\ }, g:neuron_fullscreen_search))

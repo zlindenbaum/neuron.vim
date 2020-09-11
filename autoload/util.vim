@@ -100,3 +100,13 @@ func! util#zettel_date_getter(z)
 	endif
 	return join(l:date)
 endf
+
+func! util#get_fzf_options()
+	let l:ncol = (&columns - 4) / 2
+	let l:ext = g:zextension
+
+	return extend(deepcopy(g:fzf_options), [
+		\ '--prompt', 'Search zettel: ',
+		\ '--preview', "echo {} | sed 's/:.*/".l:ext."/' | xargs fold -w ".l:ncol." -s"
+	\ ])
+endf
