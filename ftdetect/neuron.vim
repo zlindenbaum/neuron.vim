@@ -15,7 +15,7 @@ endwhile
 if exists('b:did_ftdetect') | finish | endif
 aug neuron
 	exec ':au! BufEnter '.g:zkdir.'*'.g:zextension.' call s:init()'
-	exec ':au! BufAdd '.g:zkdir.'*'.g:zextension.' call neuron#add_virtual_titles()'
+	exec ':au! BufRead '.g:zkdir.'*'.g:zextension.' call neuron#add_virtual_titles()'
 	exec ':au! BufWrite '.g:zkdir.'*'.g:zextension.' call neuron#on_write()'
 aug END
 let b:did_ftdetect = 1
