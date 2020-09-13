@@ -24,7 +24,8 @@ func! neuron#add_virtual_titles()
 		call nvim_buf_set_virtual_text(0, l:ns, l:lnum, [[l:title, g:style_virtual_title]], {})
 	endfor
 
-	let l:backn = len(g:cache_backlinks[util#current_zettel()])
+	" on gzn this key will not exist
+	let l:backn = len(get(g:cache_backlinks, util#current_zettel(), []))
 	if l:backn == 1
 		let l:backtext = "1 backlink"
 	else
@@ -48,7 +49,6 @@ func! neuron#insert_zettel_select(as_folgezettel)
 endf
 
 func! neuron#search_content(use_cursor)
-	let g:last = expand('%s')
 	let l:query = ""
 	if a:use_cursor
 		let l:query = expand("<cword>")
@@ -85,39 +85,34 @@ func! neuron#edit_zettel_backlink()
 endf
 
 func! neuron#edit_zettel_last()
-	if !exists("g:last")
+	if empty(g:last_file)
 		call util#handlerr('E6')
 		return
 	end
 
-	let l:file = g:last
-	let g:last = expand('%s')
-	exec 'edit '.l:file
+	exec 'edit '.g:last_file
 endf
 
 func! neuron#insert_zettel_last(as_folgezettel)
-	if !exists("g:last")
+	if empty(g:last_file)
 		call util#handlerr('E6')
 		return
 	end
 
-	let l:zettelid = fnamemodify(g:last, ':t:r')
+	let l:zettelid = fnamemodify(g:last_file, ':t:r')
 	call util#insert(l:zettelid, a:as_folgezettel)
 endf
 
 func! neuron#edit_zettel_new()
-	let g:last = expand('%s')
 	exec 'edit '.system('neuron -d '.shellescape(g:zkdir).' new')
 endf
 
 func! neuron#edit_zettel_new_from_cword()
-	let g:last = expand('%s')
 	let l:title = expand("<cword>")
 	exec 'edit '.system('neuron -d '.shellescape(g:zkdir).' new "'.l:title.'"')
 endf
 
 func! neuron#edit_zettel_new_from_visual()
-	let g:last = expand('%s')
 	" title from visual selection
 	let l:vs = split(util#get_visual_selection(), "\n")
 	let l:title = l:vs[0]
@@ -142,9 +137,7 @@ func! neuron#edit_zettel_under_cursor()
 endf
 
 func! neuron#edit_zettel(zettel_id)
-	let g:last = expand('%s')
-	let l:file = g:zkdir.a:zettel_id.g:zextension
-	exec 'edit '.l:file
+	exec 'edit '.g:zkdir.a:zettel_id.g:zextension
 endf
 
 func! neuron#refresh_cache()
@@ -216,6 +209,20 @@ func! s:refresh_cache_callback(data)
 	endfor
 
  	call neuron#add_virtual_titles()
+endf
+
+let g:last_file = ""
+let g:current_file = ""
+let g:did_init = 0
+func! neuron#on_enter()
+	let g:last_file = g:current_file
+	let g:current_file = expand("%s")
+
+	if g:did_init
+		return
+	endif
+	let g:did_init = 1
+	call neuron#refresh_cache()
 endf
 
 let g:must_refresh_on_write = 0
