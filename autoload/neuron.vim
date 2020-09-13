@@ -1,10 +1,11 @@
 func! neuron#add_virtual_titles()
-	if !exists("w:cache_zettels")
+	if !exists("g:cache_zettels")
 		return
 	end
 	if !exists('*nvim_buf_set_virtual_text')
 		return
 	endif
+
 	let l:ns = nvim_create_namespace('neuron')
 	call nvim_buf_clear_namespace(0, l:ns, 0, -1)
 	let l:re_neuron_link = '\[\[\[\?\([0-9a-zA-Z_-]\+\)\(?cf\)\?\]\]\]\?'
@@ -15,7 +16,7 @@ func! neuron#add_virtual_titles()
 		if empty(l:zettel_id)
 			continue
 		endif
-		let l:title = w:cache_titles[l:zettel_id]
+		let l:title = g:cache_titles[l:zettel_id]
 		" TODO: Use
 		" nvim_buf_set_extmark({buffer}, {ns_id}, {id}, {line}, {col}, {opts})
 		" function instead of nvim_buf_set_virtual_text. Check this link for
@@ -33,13 +34,13 @@ func! neuron#insert_zettel_select(as_folgezettel)
 
 	call fzf#run(fzf#wrap({
 		\ 'options': util#get_fzf_options(),
-		\ 'source': w:list_pair_zettelid_zetteltitle,
+		\ 'source': g:list_pair_zettelid_zetteltitle,
 		\ 'sink': function(l:sink_to_use),
 	\ }, g:neuron_fullscreen_search))
 endf
 
 func! neuron#search_content(use_cursor)
-	let w:last = expand('%s')
+	let g:last = expand('%s')
 	let l:query = ""
 	if a:use_cursor
 		let l:query = expand("<cword>")
@@ -50,45 +51,45 @@ endf
 func! neuron#edit_zettel_select()
 	call fzf#run(fzf#wrap({
 		\ 'options': util#get_fzf_options(),
-		\ 'source': w:list_pair_zettelid_zetteltitle,
+		\ 'source': g:list_pair_zettelid_zetteltitle,
 		\ 'sink': function('util#edit_shrink_fzf'),
 	\ }, g:neuron_fullscreen_search))
 endf
 
 func! neuron#edit_zettel_last()
-	if !exists("w:last")
+	if !exists("g:last")
 		call util#handlerr('E6')
 		return
 	end
 
-	let l:file = w:last
-	let w:last = expand('%s')
+	let l:file = g:last
+	let g:last = expand('%s')
 	exec 'edit '.l:file
 endf
 
 func! neuron#insert_zettel_last(as_folgezettel)
-	if !exists("w:last")
+	if !exists("g:last")
 		call util#handlerr('E6')
 		return
 	end
 
-	let l:zettelid = fnamemodify(w:last, ':t:r')
+	let l:zettelid = fnamemodify(g:last, ':t:r')
 	call util#insert(l:zettelid, a:as_folgezettel)
 endf
 
 func! neuron#edit_zettel_new()
-	let w:last = expand('%s')
+	let g:last = expand('%s')
 	exec 'edit '.system('neuron -d '.shellescape(g:zkdir).' new')
 endf
 
 func! neuron#edit_zettel_new_from_cword()
-	let w:last = expand('%s')
+	let g:last = expand('%s')
 	let l:title = expand("<cword>")
 	exec 'edit '.system('neuron -d '.shellescape(g:zkdir).' new "'.l:title.'"')
 endf
 
 func! neuron#edit_zettel_new_from_visual()
-	let w:last = expand('%s')
+	let g:last = expand('%s')
 	" title from visual selection
 	let l:vs = split(util#get_visual_selection(), "\n")
 	let l:title = l:vs[0]
@@ -113,7 +114,7 @@ func! neuron#edit_zettel_under_cursor()
 endf
 
 func! neuron#edit_zettel(zettel_id)
-	let w:last = expand('%s')
+	let g:last = expand('%s')
 	let l:file = g:zkdir.a:zettel_id.g:zextension
 	exec 'edit '.l:file
 endf
@@ -166,22 +167,22 @@ func! s:refresh_cache_callback(data)
 
 	call sort(l:zettels, function('util#zettel_date_sorter'))
 
-	let w:cache_titles = {}
-	let w:cache_zettels = []
-	let w:list_pair_zettelid_zetteltitle = []
+	let g:cache_titles = {}
+	let g:cache_zettels = []
+	let g:list_pair_zettelid_zetteltitle = []
 
 	for z in l:zettels
-		let w:cache_titles[z['zettelID']] = z['zettelTitle']
-		let w:cache_zettels = add(w:cache_zettels, { 'id': z['zettelID'], 'title': z['zettelTitle'], 'path': z['zettelPath'] })
-		let w:list_pair_zettelid_zetteltitle = add(w:list_pair_zettelid_zetteltitle, z['zettelID'].":".substitute(z['zettelTitle'], ':', '-', ''))
+		let g:cache_titles[z['zettelID']] = z['zettelTitle']
+		let g:cache_zettels = add(g:cache_zettels, { 'id': z['zettelID'], 'title': z['zettelTitle'], 'path': z['zettelPath'] })
+		let g:list_pair_zettelid_zetteltitle = add(g:list_pair_zettelid_zetteltitle, z['zettelID'].":".substitute(z['zettelTitle'], ':', '-', ''))
 	endfor
 
  	call neuron#add_virtual_titles()
 endf
 
-let w:must_refresh_on_write = 0
+let g:must_refresh_on_write = 0
 func! neuron#on_write()
-	if w:must_refresh_on_write
+	if g:must_refresh_on_write
 		call neuron#refresh_cache()
 	else
 		call neuron#add_virtual_titles()

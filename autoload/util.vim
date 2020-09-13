@@ -14,14 +14,14 @@ func! util#insert(zettelid, as_folgezettel)
 	endif
 
 	call neuron#add_virtual_titles()
-	let w:must_refresh_on_write = 1
+	let g:must_refresh_on_write = 1
 endf
 
 func! util#is_zettelid_valid(zettelid)
 	if empty(a:zettelid)
 		return 0
 	end
-	if !get(w:cache_titles, util#deform_zettelid(a:zettelid))
+	if !get(g:cache_titles, util#deform_zettelid(a:zettelid))
 		return 1
 	else
 		return 0
@@ -29,7 +29,7 @@ func! util#is_zettelid_valid(zettelid)
 endf
 
 func! util#get_zettel_in_line(line)
-	for zettel in w:cache_zettels
+	for zettel in g:cache_zettels
 		let l:matched = matchstr(a:line, zettel['id'])
 		if !empty(l:matched)
 			return l:matched
@@ -62,7 +62,7 @@ func! util#remove_orphans(title)
 	let l:count = 0
 	let l:targetdir = '/tmp/orphan-zettels/'
 	call mkdir(l:targetdir, 'p')
-	for zettel in w:cache_zettels
+	for zettel in g:cache_zettels
 		if zettel['title'] == a:title
 			call system("mv ".g:zkdir.zettel['path']." ".l:targetdir)
 			let l:count += 1

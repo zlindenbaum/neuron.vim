@@ -20,15 +20,15 @@ aug neuron
 aug END
 let b:did_ftdetect = 1
 
-let w:did_init = 0
+let g:did_init = 0
 func! s:init()
 	" TODO: Activate markdown and neuron filetype at the same time.
 	" exec ':au! BufRead,BufNewFile '.g:zkdir.'*'.g:zextension.' setf=neuron'
 	" runtime! ftplugin/markdown.vim
 	" runtime! ftplugin/markdown_*.vim ftplugin/markdown/*.vim
-	if w:did_init
+	if g:did_init
 		return
 	endif
-	let w:did_init = 1
+	let g:did_init = 1
 	call neuron#refresh_cache()
 endf
