@@ -22,9 +22,10 @@ let g:neuron_rib_job = -1
 nm <silent> <Plug>NeuronRibStop :<C-U>call rpc#stop_server()<cr>
 nm <silent> <Plug>NeuronRibStart :<C-U>call rpc#start_server()<cr>
 nm <silent> <Plug>EditZettelNew :<C-U>call neuron#edit_zettel_new()<cr>
-nm <silent> <Plug>EditZettelSearchContent :<C-U>NeuronSearchContent<cr>
-nm <silent> <Plug>EditZettelNewFromCword      :<C-U>call neuron#edit_zettel_new_from_cword()<cr>
-nm <silent> <Plug>EditZettelNewFromVisual      :<C-U>call neuron#edit_zettel_new_from_visual()<cr>
+nm <silent> <Plug>EditZettelSearchContent :<C-U>call neuron#search_content(0)<cr>
+nm <silent> <Plug>EditZettelSearchContentUnderCursor :<C-U>call neuron#search_content(1)<cr>
+nm <silent> <Plug>EditZettelNewFromCword :<C-U>call neuron#edit_zettel_new_from_cword()<cr>
+nm <silent> <Plug>EditZettelNewFromVisual :<C-U>call neuron#edit_zettel_new_from_visual()<cr>
 nm <silent> <Plug>EditZettelLast :<C-U>call neuron#edit_zettel_last()<cr>
 nm <silent> <Plug>NeuronRefreshCache :<C-U>call neuron#refresh_cache()<cr>
 nm <silent> <Plug>EditZettelSelect :<C-U>call neuron#edit_zettel_select()<cr>
@@ -42,6 +43,7 @@ if !exists("g:neuron_no_mappings") || ! g:neuron_no_mappings
 	nm gzz <Plug>EditZettelSelect
 	nm gzo <Plug>EditZettelUnderCursor
 	nm gzs <Plug>EditZettelSearchContent
+	nm gzS <Plug>EditZettelSearchContentUnderCursor
 	nm gzl <Plug>InsertZettelLast
 	nm gzi <Plug>InsertZettelSelect
 	nm gzL :<C-U>call neuron#insert_zettel_last(1)<cr>
@@ -50,7 +52,6 @@ end
 
 com! NeuronRibStart :call rpc#start_server()
 com! NeuronRibStop  :call rpc#stop_server()
-com! -nargs=* -bang NeuronSearchContent call neuron#search_content(<q-args>, <bang>0)
 
 let g:neuron_errors = {
 	\ 'E1': {

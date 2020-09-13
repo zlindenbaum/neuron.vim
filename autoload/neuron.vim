@@ -35,20 +35,13 @@ func! neuron#insert_zettel_select(as_folgezettel)
 	\ }, g:neuron_fullscreen_search))
 endf
 
-func! neuron#search_content(query, fullscreen)
-	let cmd_fmt = 'rg --column --line-number --no-heading --color=always --smart-case -- %s || true'
-	let initial_cmd = printf(cmd_fmt, shellescape(a:query))
-	let reload_cmd = printf(cmd_fmt, '{q}')
-	let spec = {'dir': g:zkdir,
-		\ 'options': [
-			\ '--phony',
-			\ '--query',
-			\ a:query,
-			\ '--bind',
-			\ 'change:reload:'.reload_cmd
-		\]
-	\}
-	call fzf#vim#grep(initial_cmd,1,fzf#vim#with_preview(spec),a:fullscreen)
+func! neuron#search_content(use_cursor)
+	let w:last = expand('%s')
+	let l:query = ""
+	if a:use_cursor
+		let l:query = expand("<cword>")
+	endif
+	call fzf#vim#ag(l:query, g:neuron_fullscreen_search)
 endf
 
 func! neuron#edit_zettel_select()
@@ -87,7 +80,6 @@ endf
 
 func! neuron#edit_zettel_new_from_cword()
 	let w:last = expand('%s')
-	" get the new title
 	let l:title = expand("<cword>")
 	exec 'edit '.system('neuron -d '.shellescape(g:zkdir).' new "'.l:title.'"')
 endf

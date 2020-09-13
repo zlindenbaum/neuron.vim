@@ -14,7 +14,6 @@ help of [neuron](https://github.com/srid/neuron) in {n}vim.
 ### Using [vim-plug](https://github.com/junegunn/vim-plug)
 ```vim
 Plug 'junegunn/fzf.vim'
-Plug 'BurntSushi/ripgrep'
 Plug 'fiatjaf/neuron.vim'
 ```
 ```
@@ -52,6 +51,7 @@ let g:neuron_no_mappings = 1
 9. Different timing for refresh cache and async jobs.
 10. Zettels sorted by date on `gzz/gzi` search (newest zettels seen first).
 11. Preview windows from `gzz/gzi`.
+12. `gzs/gzS` search using `ag` directly, no vim-ripgrep-plugin requirement.
 
 ## Caveats, Gotchas and Further Explanation
 
