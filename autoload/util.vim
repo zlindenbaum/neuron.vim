@@ -21,7 +21,7 @@ func! util#is_zettelid_valid(zettelid)
 	if empty(a:zettelid)
 		return 0
 	end
-	if !get(g:cache_titles, util#deform_zettelid(a:zettelid))
+	if !empty(get(g:cache_titles, util#deform_zettelid(a:zettelid)))
 		return 1
 	else
 		return 0
