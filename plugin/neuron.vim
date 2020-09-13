@@ -41,6 +41,8 @@ if !exists("g:neuron_no_mappings") || ! g:neuron_no_mappings
 	nm gzb <Plug>NeuronRibStart
 	nm gzr <Plug>NeuronRefreshCache
 	nm gzu <Plug>EditZettelLast
+	nm gzU :<C-U>call neuron#move_history(-1)<cr>
+	nm gzP :<C-U>call neuron#move_history(1)<cr>
 	nm gzz <Plug>EditZettelSelect
 	nm gzZ <Plug>EditZettelBacklink
 	nm gzo <Plug>EditZettelUnderCursor

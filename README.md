@@ -53,6 +53,7 @@ let g:neuron_no_mappings = 1
 11. Preview windows from `gzz/gzi`.
 12. `gzs/gzS` search using `ag` directly, no vim-ripgrep-plugin requirement.
 13. `gzZ` shows/searches among backlinks of the current zettel.
+14. `gzU/gzP` navigate through the history of visited zettels, back and forth.
 
 ## Caveats, Gotchas and Further Explanation
 

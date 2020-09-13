@@ -85,20 +85,29 @@ func! neuron#edit_zettel_backlink()
 endf
 
 func! neuron#edit_zettel_last()
-	if empty(g:last_file)
-		call util#handlerr('E6')
-		return
-	end
+   if empty(g:last_file)
+	   call util#handlerr('E6')
+   endif
+   exec 'edit '.g:last_file
+endf
 
-	exec 'edit '.g:last_file
+func! neuron#move_history(dir)
+	let l:cursor = g:history_cursor + a:dir
+	if l:cursor < 0 || (l:cursor - 1) > len(g:history)
+		echo "No history to navigate on that direction."
+		return
+	endif
+
+	let g:history_cursor = l:cursor
+	let g:history_prevent_overwrite = 1
+	exec 'edit '.g:history[g:history_cursor]
 endf
 
 func! neuron#insert_zettel_last(as_folgezettel)
 	if empty(g:last_file)
 		call util#handlerr('E6')
 		return
-	end
-
+	endif
 	let l:zettelid = fnamemodify(g:last_file, ':t:r')
 	call util#insert(l:zettelid, a:as_folgezettel)
 endf
@@ -211,12 +220,27 @@ func! s:refresh_cache_callback(data)
  	call neuron#add_virtual_titles()
 endf
 
+" used by gzu/gzl (insert_zettel_last, edit_zettel_last)
 let g:last_file = ""
 let g:current_file = ""
+
+" used by gzu/gzl/gzU/gzP (move_history)
+let g:history = []
+let g:history_cursor = -1
+let g:history_prevent_overwrite = 0
+
+" used when we first open vim
 let g:did_init = 0
+
 func! neuron#on_enter()
 	let g:last_file = g:current_file
 	let g:current_file = expand("%s")
+
+	if !g:history_prevent_overwrite
+		let g:history = g:history[0:g:history_cursor]
+		call add(g:history, expand("%s"))
+		let g:history_cursor = g:history_cursor + 1
+	endif
 
 	if g:did_init
 		return
