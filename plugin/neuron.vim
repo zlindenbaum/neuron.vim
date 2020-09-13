@@ -12,7 +12,7 @@ endif
 let g:loaded_neuron_vim = 1
 
 let g:neuron_no_mappings  = get(g:, 'neuron_no_mappings', 0)
-let g:style_virtual_title = get(g:, 'style_virtual_title', 'Comment')
+let g:style_virtual_title = get(g:, 'style_virtual_title', 'TabLineFill')
 let g:fzf_options         = get(g:, 'fzf_options', ['-d',':','--with-nth','2'])
 let g:path_neuron = get(g:, 'path_neuron', system('which neuron | tr -d "\n"'))
 let g:neuron_fullscreen_search = get(g:, 'neuron_fullscreen_search', 0)

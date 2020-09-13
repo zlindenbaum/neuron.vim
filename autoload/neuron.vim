@@ -23,6 +23,14 @@ func! neuron#add_virtual_titles()
 		" help https://github.com/neovim/neovim/blob/e628a05b51d4620e91662f857d29f1ac8fc67862/runtime/doc/api.txt#L1935-L1955
 		call nvim_buf_set_virtual_text(0, l:ns, l:lnum, [[l:title, g:style_virtual_title]], {})
 	endfor
+
+	let l:backlinks = g:cache_backlinks[substitute(expand("%s"), g:zextension, "", "")]
+	if empty(l:backlinks)
+		let l:backtext = "No backlinks."
+	else
+		let l:backtext = "Backlinks: ".join(l:backlinks)
+	end
+	call nvim_buf_set_virtual_text(0, l:ns, 0, [[l:backtext, "DiffChange"]], {})
 endf
 
 func! neuron#insert_zettel_select(as_folgezettel)
@@ -170,11 +178,21 @@ func! s:refresh_cache_callback(data)
 	let g:cache_titles = {}
 	let g:cache_zettels = []
 	let g:list_pair_zettelid_zetteltitle = []
+	let g:cache_backlinks = {}
 
 	for z in l:zettels
 		let g:cache_titles[z['zettelID']] = z['zettelTitle']
-		let g:cache_zettels = add(g:cache_zettels, { 'id': z['zettelID'], 'title': z['zettelTitle'], 'path': z['zettelPath'] })
-		let g:list_pair_zettelid_zetteltitle = add(g:list_pair_zettelid_zetteltitle, z['zettelID'].":".substitute(z['zettelTitle'], ':', '-', ''))
+		call add(g:cache_zettels, { 'id': z['zettelID'], 'title': z['zettelTitle'], 'path': z['zettelPath'] })
+		call add(g:list_pair_zettelid_zetteltitle, z['zettelID'].":".substitute(z['zettelTitle'], ':', '-', ''))
+		let g:cache_backlinks[z['zettelID']] = []
+	endfor
+
+	for z in l:zettels
+		for l in z['zettelQueries']
+			if l[0] == 'ZettelQuery_ZettelByID'
+				call add(g:cache_backlinks[l[1][0]], z['zettelID'])
+			endif
+		endfor
 	endfor
 
  	call neuron#add_virtual_titles()

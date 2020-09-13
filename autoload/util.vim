@@ -30,9 +30,9 @@ endf
 
 func! util#get_zettel_in_line(line)
 	for zettel in g:cache_zettels
-		let l:matched = matchstr(a:line, zettel['id'])
+		let l:matched = matchstr(a:line, '\[\['.zettel['id'].'\]\]')
 		if !empty(l:matched)
-			return l:matched
+			return l:matched[2:-3]
 		end
 	endfor
 	return ""
