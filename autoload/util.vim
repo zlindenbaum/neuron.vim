@@ -38,6 +38,10 @@ func! util#get_zettel_in_line(line)
 	return ""
 endf
 
+func! util#get_zettel_from_fzf_line(line)
+	return split(a:line, ":")[0]
+endf
+
 func! util#deform_zettelid(zettelid)
 	if a:zettelid =~ "\[\[\[\?.*\]\]\]\?"
 		return substitute(a:zettelid, '\[\[\[\?\([0-9a-zA-Z_-]\+\)\(?cf\)\?\]\]\]\?', '\1', 'g')
@@ -47,15 +51,15 @@ func! util#deform_zettelid(zettelid)
 endf
 
 func! util#insert_shrink_fzf(line)
-	call util#insert(util#get_zettel_in_line(a:line), 0)
+	call util#insert(util#get_zettel_from_fzf_line(a:line), 0)
 endf
 
 func! util#insert_shrink_fzf_folgezettel(line)
-	call util#insert(util#get_zettel_in_line(a:line), 1)
+	call util#insert(util#get_zettel_from_fzf_line(a:line), 1)
 endf
 
 func! util#edit_shrink_fzf(line)
-	call neuron#edit_zettel(util#get_zettel_in_line(a:line))
+	call neuron#edit_zettel(util#get_zettel_from_fzf_line(a:line))
 endf
 
 func! util#remove_orphans(title)
@@ -124,5 +128,5 @@ func! util#get_visual_selection()
 endf
 
 func! util#current_zettel()
-	return substitute(expand("%s"), g:zextension, "", "")
+	return fnamemodify(expand("%s"), ':t:r')
 endf
