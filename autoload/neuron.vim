@@ -24,12 +24,12 @@ func! neuron#add_virtual_titles()
 		call nvim_buf_set_virtual_text(0, l:ns, l:lnum, [[l:title, g:style_virtual_title]], {})
 	endfor
 
-	let l:backlinks = g:cache_backlinks[substitute(expand("%s"), g:zextension, "", "")]
-	if empty(l:backlinks)
-		let l:backtext = "No backlinks."
+	let l:backn = len(g:cache_backlinks[util#current_zettel()])
+	if l:backn == 1
+		let l:backtext = "1 backlink"
 	else
-		let l:backtext = "Backlinks: ".join(l:backlinks)
-	end
+		let l:backtext = l:backn." backlinks"
+	endif
 	call nvim_buf_set_virtual_text(0, l:ns, 0, [[l:backtext, "DiffChange"]], {})
 endf
 
@@ -60,6 +60,26 @@ func! neuron#edit_zettel_select()
 	call fzf#run(fzf#wrap({
 		\ 'options': util#get_fzf_options(),
 		\ 'source': g:list_pair_zettelid_zetteltitle,
+		\ 'sink': function('util#edit_shrink_fzf'),
+	\ }, g:neuron_fullscreen_search))
+endf
+
+func! neuron#edit_zettel_backlink()
+	let l:current_zettel = util#current_zettel()
+
+	let l:list = []
+	for id in g:cache_backlinks[l:current_zettel]
+		call add(l:list, id.":".g:cache_titles[id])
+	endfor
+
+	let l:options = util#get_fzf_options()
+	let l:options = l:options + ["--header", "Backlinks to <".l:current_zettel.">"]
+	let l:options = l:options + ["--reverse"]
+	let l:options = l:options + ["--prompt", "Search backlink: "]
+
+	call fzf#run(fzf#wrap({
+		\ 'options': l:options,
+		\ 'source': l:list,
 		\ 'sink': function('util#edit_shrink_fzf'),
 	\ }, g:neuron_fullscreen_search))
 endf

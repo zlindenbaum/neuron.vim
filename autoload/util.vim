@@ -122,3 +122,7 @@ func! util#get_visual_selection()
 		let @a = l:a_save
 	endtry
 endf
+
+func! util#current_zettel()
+	return substitute(expand("%s"), g:zextension, "", "")
+endf
