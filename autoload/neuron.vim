@@ -1,4 +1,7 @@
 func! neuron#add_virtual_titles()
+	if !exists("w:cache_zettels")
+		return
+	end
 	if !exists('*nvim_buf_set_virtual_text')
 		return
 	endif
@@ -111,7 +114,8 @@ endf
 
 func! neuron#edit_zettel(zettel_id)
 	let w:last = expand('%s')
-	exec 'edit '.s:expand_zettel_id(a:zettel_id)
+	let l:file = g:zkdir.a:zettel_id.g:zextension
+	exec 'edit '.l:file
 endf
 
 func! neuron#refresh_cache()
@@ -175,13 +179,11 @@ func! s:refresh_cache_callback(data)
  	call neuron#add_virtual_titles()
 endf
 
-func! s:expand_zettel_id(zettel_id)
-	return g:zkdir . a:zettel_id . g:zextension
-endf
-
-func! s:warn(msg)
-	echohl WarningMsg
-	echo a:msg
-	echohl None
-	return 0
+let w:must_refresh_on_write = 0
+func! neuron#on_write()
+	if w:must_refresh_on_write
+		call neuron#refresh_cache()
+	else
+		call neuron#add_virtual_titles()
+	end
 endf

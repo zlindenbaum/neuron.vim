@@ -13,6 +13,8 @@ func! util#insert(zettelid, as_folgezettel)
 		execute "normal! a".l:formatted
 	endif
 
+	call neuron#add_virtual_titles()
+	let w:must_refresh_on_write = 1
 endf
 
 func! util#is_zettelid_valid(zettelid)
