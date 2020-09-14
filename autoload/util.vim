@@ -117,16 +117,10 @@ func! util#get_fzf_options()
 	\ ])
 endf
 
-func! util#get_visual_selection()
-	try
-		let l:a_save = @a
-		silent! normal! gv"ay
-		return @a
-	finally
-		let @a = l:a_save
-	endtry
+func! util#current_zettel()
+	return util#zettel_id_from_path(expand("%s"))
 endf
 
-func! util#current_zettel()
-	return fnamemodify(expand("%s"), ':t:r')
+func! util#zettel_id_from_path(path)
+	return fnamemodify(a:path, ':t:r')
 endf

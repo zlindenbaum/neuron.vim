@@ -85,10 +85,12 @@ func! neuron#edit_zettel_backlink()
 endf
 
 func! neuron#edit_zettel_last()
-   if empty(g:last_file)
-	   call util#handlerr('E6')
-   endif
-   exec 'edit '.g:last_file
+	if empty(g:last_file)
+ 		call util#handlerr('E6')
+	endif
+	let g:history_prevent_overwrite = 1
+	let g:history_cursor = g:history_cursor - 1
+	exec 'edit '.g:last_file
 endf
 
 func! neuron#move_history(dir)
@@ -108,7 +110,7 @@ func! neuron#insert_zettel_last(as_folgezettel)
 		call util#handlerr('E6')
 		return
 	endif
-	let l:zettelid = fnamemodify(g:last_file, ':t:r')
+	let l:zettelid = util#zettel_id_from_path(g:last_file)
 	call util#insert(l:zettelid, a:as_folgezettel)
 endf
 
@@ -118,18 +120,39 @@ endf
 
 func! neuron#edit_zettel_new_from_cword()
 	let l:title = expand("<cword>")
-	exec 'edit '.system('neuron -d '.shellescape(g:zkdir).' new "'.l:title.'"')
+	let l:zettel_path = system('neuron -d '.shellescape(g:zkdir).' new "'.l:title.'"')
+
+	" replace cword with a link to the new zettel
+	let l:zettel_id = util#zettel_id_from_path(l:zettel_path)
+	execute "normal! ciw[[[".l:zettel_id."]]]"
+	call neuron#add_virtual_titles()
+	let g:must_refresh_on_write = 1
+	w
+
+	exec 'edit '.l:zettel_path
 endf
 
 func! neuron#edit_zettel_new_from_visual()
+	let l:prev = @p
+
 	" title from visual selection
-	let l:vs = split(util#get_visual_selection(), "\n")
-	let l:title = l:vs[0]
+	execute 'normal! gv"pd'
 
-	" let l:content = l:vs[1:]
-	exec 'edit '.system('neuron -d '.shellescape(g:zkdir).' new "'.l:title.'"')
+	let l:title = @p
+	let @p = l:prev
+
+	let l:zettel_path = system('neuron -d '.shellescape(g:zkdir).' new "'.l:title.'"')
+
+	""" replace selection with a link to the new zettel
+	let l:zettel_id = util#zettel_id_from_path(l:zettel_path)
+
+	execute "normal! a[[[".l:zettel_id."]]]"
+	call neuron#add_virtual_titles()
+	let g:must_refresh_on_write = 1
+	w
+
+	exec 'edit '.l:zettel_path
 endf
-
 
 func! neuron#edit_zettel_under_cursor()
 	let l:zettel_id = trim(expand('<cword>'), "<>[]")
