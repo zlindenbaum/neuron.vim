@@ -68,7 +68,7 @@ func! util#remove_orphans(title)
 	call mkdir(l:targetdir, 'p')
 	for zettel in g:cache_zettels
 		if zettel['title'] == a:title
-			call system("mv ".g:zkdir.zettel['path']." ".l:targetdir)
+			call system("mv ".g:neuron_dir.zettel['path']." ".l:targetdir)
 			let l:count += 1
 		end
 	endfor
@@ -109,7 +109,7 @@ endf
 
 func! util#get_fzf_options()
 	let l:ncol = (&columns - 4) / 2
-	let l:ext = g:zextension
+	let l:ext = g:neuron_extension
 
 	return extend(deepcopy(g:fzf_options), [
 		\ '--prompt', 'Search zettel: ',

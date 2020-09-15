@@ -1,21 +1,15 @@
-let g:zextension = get(g:, 'zextension', '.md')
-let g:zkdir = get(g:, 'zkdir', $HOME.'/zettelkasten/')
+let g:neuron_extension = get(g:, 'neuron_extension', '.md')
+let g:neuron_dir = fnamemodify(expand("%:p"), ":h:r")."/"
 
-" search for neuron.dhall
-let s:current = expand("%:p")
-let s:dir = fnamemodify(s:current, ":h:r")
-while s:dir != "/"
-	if filereadable(s:dir."/neuron.dhall")
-		let g:zkdir = s:dir."/"
-		break
-	endif
-	let s:dir = fnamemodify(s:dir, ":h:r")
-endwhile
+if !filereadable(g:neuron_dir."neuron.dhall")
+    " if there is no neuron.dhall file in current dir then it is not a zettelkasten
+	finish
+endif
 
 if exists('b:did_ftdetect') | finish | endif
 aug neuron
-	exec ':au! BufRead '.g:zkdir.'*'.g:zextension.' call neuron#add_virtual_titles()'
-	exec ':au! BufEnter '.g:zkdir.'*'.g:zextension.' call neuron#on_enter()'
-	exec ':au! BufWrite '.g:zkdir.'*'.g:zextension.' call neuron#on_write()'
+	exec ':au! BufRead '.g:neuron_dir.'*'.g:neuron_extension.' call neuron#add_virtual_titles()'
+	exec ':au! BufEnter '.g:neuron_dir.'*'.g:neuron_extension.' call neuron#on_enter()'
+	exec ':au! BufWrite '.g:neuron_dir.'*'.g:neuron_extension.' call neuron#on_write()'
 aug END
 let b:did_ftdetect = 1
