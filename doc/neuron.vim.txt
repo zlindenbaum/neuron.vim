@@ -1,44 +1,47 @@
 *neuron.vim.txt* Manage your Zettelkasten.
 
-Author: ihsan <https://ihsanturk.dev/>
+Author: fiatjaf <https://fiatjaf.alhur.es/>
 
 INTRODUCTION                                    *neuron.vim*
 
-neuron.vim manages your zettelkasten. You can search, create and open your
-zettels using fzf, ripgrep and neuron under the hood.
+neuron.vim manages your zettelkasten. You can search, create, navigate and open your zettels using fzf and neuron.
 
 CONFIGURATION                                   *neuron.vim-configuration*
-g:style_virtual_title   Style the virtual titles. The value can be anything
-                        from the output of |hi| command. Default >
-                        let g:style_virtual_title = 'Comment'
+g:neuron_extension          Zettel file extension. Default: >
+                            let g:neuron_extension = '.md'
 
-g:zextension            Zettel file extension. Default: >
-                        let g:zexte = '.md'
+g:neuron_fullscreen_search  If fzf searches are to occupy the entire screen. Default: >
+                            let g:neuron_fullscreen_search = 0
 
-g:zkdir                 Zettelkasten directory. Default: >
-                        let g:zkdir = $HOME.'/zettelkasten/'
+g:neuron_fzf_options        Change the fzf parameters. Default: >
+                            let g:neuron_fzf_options = ['-d',':','--with-nth','2']
 
-g:fzf_options           Change the fzf parameters. Default: >
-                        let g:fzf_options = ['-d',':','--with-nth','2']
-
-g:path_neuron           Path to neuron. Default >
-                        let g:path_neuron = system('which neuron | tr -d "\n"')
+g:neuron_executable         Path to neuron. Default >
+                            let g:neuron_executable = system('which neuron | tr -d "\n"')
 
 MAPPINGS                                        *neuron.vim-mappings*
 
 >
-             nm gzn <Plug>EditZettelNew
-             nm gzb <Plug>NeuronRibStart
-             nm gzu <Plug>EditZettelLast
-             nm gzl <Plug>InsertZettelLast
-             nm gzz <Plug>EditZettelSelect
-             nm gzi <Plug>InsertZettelSelect
-             nm gzr <Plug>NeuronRefreshCache
-             nm gzo <Plug>EditZettelUnderCursor
-             nm gzs <Plug>EditZettelSearchContent
+	nm gzn <Plug>EditZettelNew
+	nm gzN <Plug>EditZettelNewFromCword
+	vm gzN <esc><Plug>EditZettelNewFromVisual
+	nm gzb <Plug>NeuronRibStart
+	nm gzr <Plug>NeuronRefreshCache
+	nm gzu <Plug>EditZettelLast
+	nm gzU :<C-U>call neuron#move_history(-1)<cr>
+	nm gzP :<C-U>call neuron#move_history(1)<cr>
+	nm gzz <Plug>EditZettelSelect
+	nm gzZ <Plug>EditZettelBacklink
+	nm gzo <Plug>EditZettelUnderCursor
+	nm gzs <Plug>EditZettelSearchContent
+	nm gzS <Plug>EditZettelSearchContentUnderCursor
+	nm gzl <Plug>InsertZettelLast
+	nm gzi <Plug>InsertZettelSelect
+	nm gzL :<C-U>call neuron#insert_zettel_last(1)<cr>
+	nm gzI :<C-U>call neuron#insert_zettel_select(1)<cr>
 
 ABOUT                                           *neuron.vim-about*
 
-http://github.com/ihsanturk/neuron.vim
+http://github.com/fiatjaf/neuron.vim
 
 vim:tw=78:et:ft=help:norl:
