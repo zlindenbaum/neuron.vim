@@ -14,14 +14,14 @@ func! util#insert(zettelid, as_folgezettel)
 	endif
 
 	call neuron#add_virtual_titles()
-	let g:must_refresh_on_write = 1
+	let g:_neuron_must_refresh_on_write = 1
 endf
 
 func! util#is_zettelid_valid(zettelid)
 	if empty(a:zettelid)
 		return 0
 	end
-	if !empty(get(g:cache_titles, util#deform_zettelid(a:zettelid)))
+	if !empty(get(g:_neuron_zettels_titles_list, util#deform_zettelid(a:zettelid)))
 		return 1
 	else
 		return 0
@@ -29,7 +29,7 @@ func! util#is_zettelid_valid(zettelid)
 endf
 
 func! util#get_zettel_in_line(line)
-	for zettel in g:cache_zettels
+	for zettel in g:_neuron_zettels_by_id
 		let l:matched = matchstr(a:line, '\[\['.zettel['id'].'\]\]')
 		if !empty(l:matched)
 			return l:matched[2:-3]
@@ -60,20 +60,6 @@ endf
 
 func! util#edit_shrink_fzf(line)
 	call neuron#edit_zettel(util#get_zettel_from_fzf_line(a:line))
-endf
-
-func! util#remove_orphans(title)
-	let l:count = 0
-	let l:targetdir = '/tmp/orphan-zettels/'
-	call mkdir(l:targetdir, 'p')
-	for zettel in g:cache_zettels
-		if zettel['title'] == a:title
-			call system("mv ".g:neuron_dir.zettel['path']." ".l:targetdir)
-			let l:count += 1
-		end
-	endfor
-	echom l:count.' orphan zettels are moved to '.l:targetdir.'.'
-	echom 'You can manually delete '.l:targetdir.' directory.'
 endf
 
 func! util#handlerr(errcode)
@@ -111,7 +97,7 @@ func! util#get_fzf_options()
 	let l:ncol = (&columns - 4) / 2
 	let l:ext = g:neuron_extension
 
-	return extend(deepcopy(g:fzf_options), [
+	return extend(deepcopy(g:neuron_fzf_options), [
 		\ '--prompt', 'Search zettel: ',
 		\ '--preview', "echo {} | sed 's/:.*/".l:ext."/' | xargs fold -w ".l:ncol." -s"
 	\ ])

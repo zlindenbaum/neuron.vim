@@ -6,15 +6,14 @@
 "           License:        MIT                                   │
 "           ╰─────────────────────────────────────────────────────╯
 
-if exists("g:loaded_neuron_vim")
+if exists("g:_neuron_loaded")
 	finish
 endif
-let g:loaded_neuron_vim = 1
+let g:_neuron_loaded = 1
 
 let g:neuron_no_mappings  = get(g:, 'neuron_no_mappings', 0)
-let g:style_virtual_title = get(g:, 'style_virtual_title', 'TabLineFill')
-let g:fzf_options         = get(g:, 'fzf_options', ['-d',':','--with-nth','2'])
-let g:path_neuron = get(g:, 'path_neuron', system('which neuron | tr -d "\n"'))
+let g:neuron_fzf_options         = get(g:, 'neuron_fzf_options', ['-d',':','--with-nth','2'])
+let g:neuron_executable = get(g:, 'neuron_executable', system('which neuron | tr -d "\n"'))
 let g:neuron_fullscreen_search = get(g:, 'neuron_fullscreen_search', 0)
 
 let g:neuron_rib_job = -1
@@ -61,7 +60,7 @@ let g:neuron_errors = {
 	\ 'E1': {
 		\ 'problem': "neuron not found",
 		\ 'suggestions': [
-			\ "add: `let g:path_neuron = 'path/to/neuron'` to your vimrc",
+			\ "add: `let g:neuron_executable = 'path/to/neuron'` to your vimrc",
 		\ ],
 	\ },
 	\ 'E3': {

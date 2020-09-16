@@ -1,5 +1,5 @@
 func! neuron#add_virtual_titles()
-	if !exists("g:cache_zettels")
+	if !exists("g:_neuron_zettels_by_id")
 		return
 	end
 	if !exists('*nvim_buf_set_virtual_text')
@@ -16,16 +16,16 @@ func! neuron#add_virtual_titles()
 		if empty(l:zettel_id)
 			continue
 		endif
-		let l:title = g:cache_titles[l:zettel_id]
+		let l:title = g:_neuron_zettels_titles_list[l:zettel_id]
 		" TODO: Use
 		" nvim_buf_set_extmark({buffer}, {ns_id}, {id}, {line}, {col}, {opts})
 		" function instead of nvim_buf_set_virtual_text. Check this link for
 		" help https://github.com/neovim/neovim/blob/e628a05b51d4620e91662f857d29f1ac8fc67862/runtime/doc/api.txt#L1935-L1955
-		call nvim_buf_set_virtual_text(0, l:ns, l:lnum, [[l:title, g:style_virtual_title]], {})
+		call nvim_buf_set_virtual_text(0, l:ns, l:lnum, [[l:title, 'TabLineFill']], {})
 	endfor
 
 	" on gzn this key will not exist
-	let l:backn = len(get(g:cache_backlinks, util#current_zettel(), []))
+	let l:backn = len(get(g:_neuron_backlinks, util#current_zettel(), []))
 	if l:backn == 1
 		let l:backtext = "1 backlink"
 	else
@@ -43,7 +43,7 @@ func! neuron#insert_zettel_select(as_folgezettel)
 
 	call fzf#run(fzf#wrap({
 		\ 'options': util#get_fzf_options(),
-		\ 'source': g:list_pair_zettelid_zetteltitle,
+		\ 'source': g:_neuron_zettels_search_list,
 		\ 'sink': function(l:sink_to_use),
 	\ }, g:neuron_fullscreen_search))
 endf
@@ -59,7 +59,7 @@ endf
 func! neuron#edit_zettel_select()
 	call fzf#run(fzf#wrap({
 		\ 'options': util#get_fzf_options(),
-		\ 'source': g:list_pair_zettelid_zetteltitle,
+		\ 'source': g:_neuron_zettels_search_list,
 		\ 'sink': function('util#edit_shrink_fzf'),
 	\ }, g:neuron_fullscreen_search))
 endf
@@ -68,8 +68,8 @@ func! neuron#edit_zettel_backlink()
 	let l:current_zettel = util#current_zettel()
 
 	let l:list = []
-	for id in g:cache_backlinks[l:current_zettel]
-		call add(l:list, id.":".g:cache_titles[id])
+	for id in g:_neuron_backlinks[l:current_zettel]
+		call add(l:list, id.":".g:_neuron_zettels_titles_list[id])
 	endfor
 
 	let l:options = util#get_fzf_options()
@@ -85,32 +85,32 @@ func! neuron#edit_zettel_backlink()
 endf
 
 func! neuron#edit_zettel_last()
-	if empty(g:last_file)
+	if empty(g:_neuron_last_file)
  		call util#handlerr('E6')
 	endif
-	let g:history_prevent_overwrite = 1
-	let g:history_cursor = g:history_cursor - 1
-	exec 'edit '.g:last_file
+	let g:_neuron_history_prevent_overwrite = 1
+	let g:_neuron_history_pos = g:_neuron_history_pos - 1
+	exec 'edit '.g:_neuron_last_file
 endf
 
 func! neuron#move_history(dir)
-	let l:cursor = g:history_cursor + a:dir
-	if l:cursor < 0 || (l:cursor - 1) > len(g:history)
+	let l:cursor = g:_neuron_history_pos + a:dir
+	if l:cursor < 0 || (l:cursor - 1) > len(g:_neuron_history)
 		echo "No history to navigate on that direction."
 		return
 	endif
 
-	let g:history_cursor = l:cursor
-	let g:history_prevent_overwrite = 1
-	exec 'edit '.g:history[g:history_cursor]
+	let g:_neuron_history_pos = l:cursor
+	let g:_neuron_history_prevent_overwrite = 1
+	exec 'edit '.g:_neuron_history[g:_neuron_history_pos]
 endf
 
 func! neuron#insert_zettel_last(as_folgezettel)
-	if empty(g:last_file)
+	if empty(g:_neuron_last_file)
 		call util#handlerr('E6')
 		return
 	endif
-	let l:zettelid = util#zettel_id_from_path(g:last_file)
+	let l:zettelid = util#zettel_id_from_path(g:_neuron_last_file)
 	call util#insert(l:zettelid, a:as_folgezettel)
 endf
 
@@ -126,7 +126,7 @@ func! neuron#edit_zettel_new_from_cword()
 	let l:zettel_id = util#zettel_id_from_path(l:zettel_path)
 	execute "normal! ciw[[[".l:zettel_id."]]]"
 	call neuron#add_virtual_titles()
-	let g:must_refresh_on_write = 1
+	let g:_neuron_must_refresh_on_write = 1
 	w
 
 	exec 'edit '.l:zettel_path
@@ -148,7 +148,7 @@ func! neuron#edit_zettel_new_from_visual()
 
 	execute "normal! a[[[".l:zettel_id."]]]"
 	call neuron#add_virtual_titles()
-	let g:must_refresh_on_write = 1
+	let g:_neuron_must_refresh_on_write = 1
 	w
 
 	exec 'edit '.l:zettel_path
@@ -174,12 +174,12 @@ endf
 
 func! neuron#refresh_cache()
 	try
-		if !executable(g:path_neuron)
+		if !executable(g:neuron_executable)
 			call util#handlerr('E1')
 		endif
 	endtry
 
-	let l:cmd = [g:path_neuron, "-d", g:neuron_dir, "query", "--uri", "z:zettels"]
+	let l:cmd = [g:neuron_executable, "-d", g:neuron_dir, "query", "--uri", "z:zettels"]
 	if has('nvim')
 		call jobstart(l:cmd, {
 			\ 'on_stdout': function('s:refresh_cache_callback_nvim'),
@@ -220,22 +220,22 @@ func! s:refresh_cache_callback(data)
 
 	call sort(l:zettels, function('util#zettel_date_sorter'))
 
-	let g:cache_titles = {}
-	let g:cache_zettels = []
-	let g:list_pair_zettelid_zetteltitle = []
-	let g:cache_backlinks = {}
+	let g:_neuron_zettels_titles_list = {}
+	let g:_neuron_zettels_by_id = []
+	let g:_neuron_zettels_search_list = []
+	let g:_neuron_backlinks = {}
 
 	for z in l:zettels
-		let g:cache_titles[z['zettelID']] = z['zettelTitle']
-		call add(g:cache_zettels, { 'id': z['zettelID'], 'title': z['zettelTitle'], 'path': z['zettelPath'] })
-		call add(g:list_pair_zettelid_zetteltitle, z['zettelID'].":".substitute(z['zettelTitle'], ':', '-', ''))
-		let g:cache_backlinks[z['zettelID']] = []
+		let g:_neuron_zettels_titles_list[z['zettelID']] = z['zettelTitle']
+		call add(g:_neuron_zettels_by_id, { 'id': z['zettelID'], 'title': z['zettelTitle'], 'path': z['zettelPath'] })
+		call add(g:_neuron_zettels_search_list, z['zettelID'].":".substitute(z['zettelTitle'], ':', '-', ''))
+		let g:_neuron_backlinks[z['zettelID']] = []
 	endfor
 
 	for z in l:zettels
 		for l in z['zettelQueries']
 			if l[0] == 'ZettelQuery_ZettelByID'
-				call add(g:cache_backlinks[l[1][0]], z['zettelID'])
+				call add(g:_neuron_backlinks[l[1][0]], z['zettelID'])
 			endif
 		endfor
 	endfor
@@ -244,37 +244,37 @@ func! s:refresh_cache_callback(data)
 endf
 
 " used by gzu/gzl (insert_zettel_last, edit_zettel_last)
-let g:last_file = ""
-let g:current_file = ""
+let g:_neuron_last_file = ""
+let g:_neuron_current_file = ""
 
 " used by gzu/gzl/gzU/gzP (move_history)
-let g:history = []
-let g:history_cursor = -1
-let g:history_prevent_overwrite = 0
+let g:_neuron_history = []
+let g:_neuron_history_pos = -1
+let g:_neuron_history_prevent_overwrite = 0
 
 " used when we first open vim
-let g:did_init = 0
+let g:_neuron_did_init = 0
 
 func! neuron#on_enter()
-	let g:last_file = g:current_file
-	let g:current_file = expand("%s")
+	let g:_neuron_last_file = g:_neuron_current_file
+	let g:_neuron_current_file = expand("%s")
 
-	if !g:history_prevent_overwrite
-		let g:history = g:history[0:g:history_cursor]
-		call add(g:history, expand("%s"))
-		let g:history_cursor = g:history_cursor + 1
+	if !g:_neuron_history_prevent_overwrite
+		let g:_neuron_history = g:_neuron_history[0:g:_neuron_history_pos]
+		call add(g:_neuron_history, expand("%s"))
+		let g:_neuron_history_pos = g:_neuron_history_pos + 1
 	endif
 
-	if g:did_init
+	if g:_neuron_did_init
 		return
 	endif
-	let g:did_init = 1
+	let g:_neuron_did_init = 1
 	call neuron#refresh_cache()
 endf
 
-let g:must_refresh_on_write = 0
+let g:_neuron_must_refresh_on_write = 0
 func! neuron#on_write()
-	if g:must_refresh_on_write
+	if g:_neuron_must_refresh_on_write
 		call neuron#refresh_cache()
 	else
 		call neuron#add_virtual_titles()
