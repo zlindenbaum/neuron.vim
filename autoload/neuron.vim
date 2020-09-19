@@ -1,3 +1,5 @@
+let g:_neuron_queued_function = []
+
 func! neuron#add_virtual_titles()
 	if !exists("g:_neuron_zettels_by_id")
 		return
@@ -35,6 +37,12 @@ func! neuron#add_virtual_titles()
 endf
 
 func! neuron#insert_zettel_select(as_folgezettel)
+	if !exists("g:_neuron_zettels_by_id")
+		echo "Waiting until cache is populated."
+		let g:_neuron_queued_function = ['neuron#insert_zettel_select', [as_folgezettel]]
+		return
+	end
+
 	if a:as_folgezettel
 		let l:sink_to_use = 'util#insert_shrink_fzf_folgezettel'
 	else
@@ -57,6 +65,12 @@ func! neuron#search_content(use_cursor)
 endf
 
 func! neuron#edit_zettel_select()
+	if !exists("g:_neuron_zettels_by_id")
+		echo "Waiting until cache is populated."
+		let g:_neuron_queued_function = ['neuron#edit_zettel_select', []]
+		return
+	end
+
 	call fzf#run(fzf#wrap({
 		\ 'options': util#get_fzf_options(),
 		\ 'source': g:_neuron_zettels_search_list,
@@ -65,6 +79,12 @@ func! neuron#edit_zettel_select()
 endf
 
 func! neuron#edit_zettel_backlink()
+	if !exists("g:_neuron_zettels_by_id")
+		echo "Waiting until cache is populated."
+		let g:_neuron_queued_function = ['neuron#edit_zettel_backlink', []]
+		return
+	end
+
 	let l:current_zettel = util#current_zettel()
 
 	let l:list = []
@@ -155,6 +175,11 @@ func! neuron#edit_zettel_new_from_visual()
 endf
 
 func! neuron#edit_zettel_under_cursor()
+	if !exists("g:_neuron_zettels_by_id")
+		echo "Waiting until cache is populated."
+		return
+	end
+
 	let l:zettel_id = trim(expand('<cword>'), "<>[]")
 	if util#is_zettelid_valid(l:zettel_id)
 		call neuron#edit_zettel(l:zettel_id)
@@ -241,6 +266,11 @@ func! s:refresh_cache_callback(data)
 	endfor
 
  	call neuron#add_virtual_titles()
+
+	if !empty(g:_neuron_queued_function)
+		call call(g:_neuron_queued_function[0], g:_neuron_queued_function[1])
+		let g:_neuron_queued_function = []
+	endif
 endf
 
 " used by gzu/gzl (insert_zettel_last, edit_zettel_last)
