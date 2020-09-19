@@ -1,5 +1,5 @@
 let g:neuron_extension = get(g:, 'neuron_extension', '.md')
-let g:neuron_dir = fnamemodify(expand("%:p"), ":h:r")."/"
+let g:neuron_dir = fnamemodify(expand("%:p"), ":h")."/"
 
 if !filereadable(g:neuron_dir."neuron.dhall")
     " if there is no neuron.dhall file in current dir then it is not a zettelkasten
