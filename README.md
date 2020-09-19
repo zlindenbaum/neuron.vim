@@ -2,6 +2,8 @@
 Manage your [Zettelkasten](https://neuron.zettel.page/2011401.html) with the
 help of [neuron](https://github.com/srid/neuron) in {n}vim.
 
+(This is an actively maintaned fork of [`ihsanturk/neuron.vim`](https://github.com/ihsanturk/neuron.vim) that works with newer versions of `neuron` and changes basically everything, with extra features, commands and different options.)
+
 ![usage-photo](screenshot.png)
 
 ## Requirements
