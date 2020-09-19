@@ -62,17 +62,6 @@ func! util#edit_shrink_fzf(line)
 	call neuron#edit_zettel(util#get_zettel_from_fzf_line(a:line))
 endf
 
-func! util#handlerr(errcode)
-	let l:neuron_errors = deepcopy(g:_neuron_errors)
-	let l:err = l:neuron_errors[a:errcode]
-	let l:errmsg='neuron: '.a:errcode.': '.l:err['problem']
-	if len(l:err['suggestions']) > 0
-		let l:errmsg .= '! suggestion(s): '.
-			\ join(l:err['suggestions'], ' or ')
-	end
-	echoerr l:errmsg
-endf
-
 func! util#zettel_date_sorter(a, b)
 	let l:ad = util#zettel_date_getter(a:a)
 	let l:bd = util#zettel_date_getter(a:b)

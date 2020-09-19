@@ -56,21 +56,4 @@ end
 com! NeuronRibStart :call rpc#start_server()
 com! NeuronRibStop  :call rpc#stop_server()
 
-let g:_neuron_errors = {
-	\ 'E1': {
-		\ 'problem': "neuron not found",
-		\ 'suggestions': [
-			\ "add: `let g:neuron_executable = 'path/to/neuron'` to your vimrc",
-		\ ],
-	\ },
-	\ 'E3': {
-		\ 'problem': "no such zettel",
-		\ 'suggestions': [],
-	\ },
-	\ 'E6': {
-		\ 'problem': "no file was visited before this one",
-		\ 'suggestions': [],
-	\ },
-\ }
-
 " : vim: set fdm=marker :

@@ -38,7 +38,7 @@ endf
 
 func! neuron#insert_zettel_select(as_folgezettel)
 	if !exists("g:_neuron_zettels_by_id")
-		echo "Waiting until cache is populated."
+		echo "Waiting until cache is populated..."
 		let g:_neuron_queued_function = ['neuron#insert_zettel_select', [as_folgezettel]]
 		return
 	end
@@ -66,7 +66,7 @@ endf
 
 func! neuron#edit_zettel_select()
 	if !exists("g:_neuron_zettels_by_id")
-		echo "Waiting until cache is populated."
+		echo "Waiting until cache is populated..."
 		let g:_neuron_queued_function = ['neuron#edit_zettel_select', []]
 		return
 	end
@@ -80,7 +80,7 @@ endf
 
 func! neuron#edit_zettel_backlink()
 	if !exists("g:_neuron_zettels_by_id")
-		echo "Waiting until cache is populated."
+		echo "Waiting until cache is populated..."
 		let g:_neuron_queued_function = ['neuron#edit_zettel_backlink', []]
 		return
 	end
@@ -106,8 +106,10 @@ endf
 
 func! neuron#edit_zettel_last()
 	if empty(g:_neuron_last_file)
- 		call util#handlerr('E6')
+		echo "Can't edit last zettel because none was visited before this!"
+		return
 	endif
+
 	let g:_neuron_history_prevent_overwrite = 1
 	let g:_neuron_history_pos = g:_neuron_history_pos - 1
 	exec 'edit '.g:_neuron_last_file
@@ -127,7 +129,7 @@ endf
 
 func! neuron#insert_zettel_last(as_folgezettel)
 	if empty(g:_neuron_last_file)
-		call util#handlerr('E6')
+		echo "Can't insert last zettel because none was visited before this!"
 		return
 	endif
 	let l:zettelid = util#zettel_id_from_path(g:_neuron_last_file)
@@ -188,7 +190,7 @@ func! neuron#edit_zettel_under_cursor()
 		if util#is_zettelid_valid(l:zettel_id)
 			call neuron#edit_zettel(l:zettel_id)
 		else
-			call util#handlerr('E3')
+			echo 'Word under cursor is not a known zettel!'
 		endif
 	endif
 endf
@@ -198,11 +200,10 @@ func! neuron#edit_zettel(zettel_id)
 endf
 
 func! neuron#refresh_cache()
-	try
-		if !executable(g:neuron_executable)
-			call util#handlerr('E1')
-		endif
-	endtry
+	if !executable(g:neuron_executable)
+		echo "neuron executable not found!"
+		return
+	endif
 
 	let l:cmd = [g:neuron_executable, "-d", g:neuron_dir, "query", "--uri", "z:zettels"]
 	if has('nvim')
