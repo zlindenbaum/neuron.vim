@@ -43,7 +43,6 @@ g:neuron_no_mappings        If this is set to 1 no mappings will be created. Def
                             let g:neuron_no_mappings = 0
 
 MAPPINGS                                        *neuron.vim-mappings*
-
 >
 	nm gzn <Plug>EditZettelNew
 	nm gzN <Plug>EditZettelNewFromCword
@@ -62,6 +61,7 @@ MAPPINGS                                        *neuron.vim-mappings*
 	nm gzi <Plug>InsertZettelSelect
 	nm gzL :<C-U>call neuron#insert_zettel_last(1)<cr>
 	nm gzI :<C-U>call neuron#insert_zettel_select(1)<cr>
+	nm gzv <Plug>ToggleBacklinks
 
 ABOUT                                           *neuron.vim-about*
 
