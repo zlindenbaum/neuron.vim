@@ -15,6 +15,9 @@ let g:neuron_no_mappings  = get(g:, 'neuron_no_mappings', 0)
 let g:neuron_fzf_options         = get(g:, 'neuron_fzf_options', ['-d',':','--with-nth','2'])
 let g:neuron_executable = get(g:, 'neuron_executable', system('which neuron | tr -d "\n"'))
 let g:neuron_fullscreen_search = get(g:, 'neuron_fullscreen_search', 0)
+let g:neuron_backlinks_vsplit = get(g:, 'neuron_backlinks_vsplit', 1)
+let g:neuron_backlinks_size = get(g:, 'neuron_backlinks_size', 40)
+let g:neuron_inline_backlinks = get(g:, 'neuron_inline_backlinks', 1)
 
 let g:_neuron_rib_job = -1
 
@@ -32,6 +35,7 @@ nm <silent> <Plug>EditZettelBacklink :<C-U>call neuron#edit_zettel_backlink()<cr
 nm <silent> <Plug>EditZettelUnderCursor :<C-U>call neuron#edit_zettel_under_cursor()<cr>
 nm <silent> <Plug>InsertZettelLast :<C-U>call neuron#insert_zettel_last(0)<cr>
 nm <silent> <Plug>InsertZettelSelect :<C-U>call neuron#insert_zettel_select(0)<cr>
+nm <silent> <Plug>NeuronToggleBacklinks :<C-U>call neuron#toggle_backlinks()<cr>
 
 if !exists("g:neuron_no_mappings") || ! g:neuron_no_mappings
 	nm gzn <Plug>EditZettelNew
@@ -51,6 +55,7 @@ if !exists("g:neuron_no_mappings") || ! g:neuron_no_mappings
 	nm gzi <Plug>InsertZettelSelect
 	nm gzL :<C-U>call neuron#insert_zettel_last(1)<cr>
 	nm gzI :<C-U>call neuron#insert_zettel_select(1)<cr>
+	nm gzv <Plug>NeuronToggleBacklinks
 end
 
 com! NeuronRibStart :call rpc#start_server()

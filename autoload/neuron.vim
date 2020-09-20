@@ -26,6 +26,10 @@ func! neuron#add_virtual_titles()
 		call nvim_buf_set_virtual_text(0, l:ns, l:lnum, [[l:title, 'TabLineFill']], {})
 	endfor
 
+	if g:neuron_inline_backlinks == 0
+		return
+	endif
+
 	" on gzn this key will not exist
 	let l:backn = len(get(g:_neuron_backlinks, util#current_zettel(), []))
 	if l:backn == 1
@@ -296,6 +300,8 @@ func! neuron#on_enter()
 		let g:_neuron_history_pos = g:_neuron_history_pos + 1
 	endif
 
+	call neuron#update_backlinks(0)
+
 	if g:_neuron_did_init
 		return
 	endif
@@ -311,3 +317,74 @@ func! neuron#on_write()
 		call neuron#add_virtual_titles()
 	end
 endf
+
+func! neuron#update_backlinks(show)
+	let l:is_open = 0
+	if a:show == 0
+		for win in range(1, winnr('$'))
+			if getwinvar(win, '_neuron_backlinks')
+				let l:is_open = 1
+			endif
+		endfor
+		if l:is_open == 0
+			return
+		endif
+	endif
+
+	let l:current_zettel = util#current_zettel()
+	if empty(l:current_zettel)
+		return
+	endif
+
+	let l:cmd = 'neuron query --backlinks-of ' . l:current_zettel
+	let l:cmd_output = system(l:cmd)
+	let l:links = json_decode(l:cmd_output)
+
+	let l:output = ["# Backlinks for '" . l:current_zettel . "'", ""]
+
+	if empty(l:links["result"])
+		let l:output += ["None."]
+	endif
+
+	for z in l:links["result"]
+		let l:output += ['- [[' . z[1]['zettelID'] . ']] ' . z[1]['zettelTitle']]
+	endfor
+
+	"if it exists, switch and update
+	for win in range(1, winnr('$'))
+		if getwinvar(win, '_neuron_backlinks')
+			let l:current_window = win_getid()
+			call win_gotoid(win_getid(win))
+			setlocal modifiable
+			call setline(1, l:output)
+			setlocal nomodifiable
+			call win_gotoid(l:current_window)
+
+			return
+		endif
+	endfor
+
+	let l:current_window = win_getid()
+	if g:neuron_backlinks_vsplit == 1
+		exe g:neuron_backlinks_size . 'vnew'
+	else
+		exe g:neuron_backlinks_size . 'new'
+	endif
+	let w:_neuron_backlinks=1
+	setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile ft=markdown
+	call setline(1, l:output)
+	setlocal nomodifiable
+	call win_gotoid(l:current_window)
+endfunc
+
+func! neuron#toggle_backlinks()
+	for win in range(1, winnr('$'))
+		if getwinvar(win, '_neuron_backlinks')
+			execute win . 'windo close'
+
+			return
+		endif
+	endfor
+
+	call neuron#update_backlinks(1)
+endfunc
