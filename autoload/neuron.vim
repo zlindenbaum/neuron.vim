@@ -356,6 +356,7 @@ func! neuron#update_backlinks(show)
 			let l:current_window = win_getid()
 			call win_gotoid(win_getid(win))
 			setlocal modifiable
+      %delete
 			call setline(1, l:output)
 			setlocal nomodifiable
 			call win_gotoid(l:current_window)
@@ -365,11 +366,14 @@ func! neuron#update_backlinks(show)
 	endfor
 
 	let l:current_window = win_getid()
+  let l:savesplitright = &splitright
+  let &splitright = g:neuron_backlinks_vsplit_right
 	if g:neuron_backlinks_vsplit == 1
 		exe g:neuron_backlinks_size . 'vnew'
 	else
 		exe g:neuron_backlinks_size . 'new'
 	endif
+  let &splitright = l:savesplitright
 	let w:_neuron_backlinks=1
 	setlocal buftype=nofile bufhidden=wipe nobuflisted noswapfile ft=markdown
 	call setline(1, l:output)

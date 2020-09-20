@@ -7,12 +7,18 @@ INTRODUCTION                                    *neuron.vim*
 neuron.vim manages your zettelkasten. You can search, create, navigate and open your zettels using fzf and neuron.
 
 CONFIGURATION                                   *neuron.vim-configuration*
+g:neuron_backlinks_size     Size in characters used for backlinks window. Default: >
+                            let g:neuron_backlinks_size = 40
+
 g:neuron_backlinks_vsplit   If this is set to 1, backlinks will be shown in a vertical
                             split. Otherwise a horizontal split will be user. Default: >
                             let g:neuron_backlinks_vsplit = 1
 
-g:neuron_backlinks_size     Size in characters used for backlinks window. Default: >
-                            let g:neuron_backlinks_size = 40
+g:neuron_backlinks_vsplit_right
+                            If this is set to 1, backlinks will be shown in a vertical
+                            split on the right, otherwise they will be on the left.
+                            Default: >
+                            let g:neuron_backlinks_vsplit_right = 1
 
 g:neuron_dir                Zettelkasten location. Default: >
                             let g:neuron_dir = getcwd()
