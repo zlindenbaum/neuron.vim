@@ -11,14 +11,14 @@ if exists("g:_neuron_loaded")
 endif
 let g:_neuron_loaded = 1
 
-let g:neuron_no_mappings = get(g:, 'neuron_no_mappings', 0)
-let g:neuron_fzf_options = get(g:, 'neuron_fzf_options', ['-d',':','--with-nth','2'])
+let g:neuron_backlinks_size = get(g:, 'neuron_backlinks_size', 40)
+let g:neuron_backlinks_vsplit = get(g:, 'neuron_backlinks_vsplit', 1)
+let g:neuron_backlinks_vsplit_right = get(g:, 'neuron_backlinks_vsplit_right', 1)
 let g:neuron_executable = get(g:, 'neuron_executable', system('which neuron | tr -d "\n"'))
 let g:neuron_fullscreen_search = get(g:, 'neuron_fullscreen_search', 0)
-let g:neuron_backlinks_vsplit_right = get(g:, 'neuron_backlinks_vsplit_right', 1)
-let g:neuron_backlinks_vsplit = get(g:, 'neuron_backlinks_vsplit', 1)
-let g:neuron_backlinks_size = get(g:, 'neuron_backlinks_size', 40)
+let g:neuron_fzf_options = get(g:, 'neuron_fzf_options', ['-d',':','--with-nth','2'])
 let g:neuron_inline_backlinks = get(g:, 'neuron_inline_backlinks', 1)
+let g:neuron_no_mappings = get(g:, 'neuron_no_mappings', 0)
 
 let g:_neuron_rib_job = -1
 
