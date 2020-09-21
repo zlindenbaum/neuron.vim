@@ -336,18 +336,16 @@ func! neuron#update_backlinks(show)
 		return
 	endif
 
-	let l:cmd = 'neuron query --backlinks-of ' . l:current_zettel
-	let l:cmd_output = system(l:cmd)
-	let l:links = json_decode(l:cmd_output)
-
 	let l:output = ["# Backlinks for '" . l:current_zettel . "'", ""]
+	let l:links = get(g:_neuron_backlinks, l:current_zettel, [])
 
-	if empty(l:links["result"])
+	if empty(l:links)
 		let l:output += ["None."]
 	endif
 
-	for z in l:links["result"]
-		let l:output += ['- [[' . z[1]['zettelID'] . ']] ' . z[1]['zettelTitle']]
+	for id in l:links
+		let l:title = g:_neuron_zettels_titles_list[id]
+		let l:output += ["- [[".id."]] ".title]
 	endfor
 
 	"if it exists, switch and update
