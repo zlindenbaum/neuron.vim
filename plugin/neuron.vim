@@ -56,7 +56,7 @@ if !exists("g:neuron_no_mappings") || ! g:neuron_no_mappings
 	nm gzi <Plug>InsertZettelSelect
 	nm gzL :<C-U>call neuron#insert_zettel_last(1)<cr>
 	nm gzI :<C-U>call neuron#insert_zettel_select(1)<cr>
-	nm gzt <Plug>ToggleBacklinks
+	nm gzv <Plug>ToggleBacklinks
 end
 
 com! NeuronRibStart :call rpc#start_server()
