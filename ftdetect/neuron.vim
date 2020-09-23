@@ -1,13 +1,13 @@
 let g:neuron_extension = get(g:, 'neuron_extension', '.md')
 let g:neuron_dir = get(g:, 'neuron_dir', fnamemodify(expand("%:p"), ":h")."/")
 
-"fallback to using getcwd if the above gives us a relative path
+" fallback to using getcwd if the above gives us a relative path
 if g:neuron_dir == './'
-  let g:neuron_dir = getcwd() . "/"
+	let g:neuron_dir = getcwd() . "/"
 endif
 
+" if there is no neuron.dhall file in current dir then it is not a zettelkasten
 if !filereadable(g:neuron_dir."neuron.dhall")
-    " if there is no neuron.dhall file in current dir then it is not a zettelkasten
 	finish
 endif
 
