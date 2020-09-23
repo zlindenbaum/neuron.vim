@@ -141,12 +141,12 @@ func! neuron#insert_zettel_last(as_folgezettel)
 endf
 
 func! neuron#edit_zettel_new()
-	exec 'edit '.system('neuron -d '.shellescape(g:neuron_dir).' new')
+	exec 'edit '.system(g:neuron_executable.' -d '.shellescape(g:neuron_dir).' new')
 endf
 
 func! neuron#edit_zettel_new_from_cword()
 	let l:title = expand("<cword>")
-	let l:zettel_path = system('neuron -d '.shellescape(g:neuron_dir).' new "'.l:title.'"')
+	let l:zettel_path = system(g:neuron_executable.' -d '.shellescape(g:neuron_dir).' new "'.l:title.'"')
 
 	" replace cword with a link to the new zettel
 	let l:zettel_id = util#zettel_id_from_path(l:zettel_path)
@@ -167,7 +167,7 @@ func! neuron#edit_zettel_new_from_visual()
 	let l:title = @p
 	let @p = l:prev
 
-	let l:zettel_path = system('neuron -d '.shellescape(g:neuron_dir).' new "'.l:title.'"')
+	let l:zettel_path = system(g:neuron_executable.' -d '.shellescape(g:neuron_dir).' new "'.l:title.'"')
 
 	""" replace selection with a link to the new zettel
 	let l:zettel_id = util#zettel_id_from_path(l:zettel_path)
@@ -209,7 +209,7 @@ func! neuron#refresh_cache()
 		return
 	endif
 
-	let l:cmd = [g:neuron_executable, "-d", g:neuron_dir, "query", "--uri", "z:zettels"]
+	let l:cmd = g:neuron_executable.' -d '.g:neuron_dir.' query --uri z:zettels'
 	if has('nvim')
 		call jobstart(l:cmd, {
 			\ 'on_stdout': function('s:refresh_cache_callback_nvim'),
