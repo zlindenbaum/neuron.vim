@@ -209,7 +209,7 @@ func! neuron#refresh_cache()
 		return
 	endif
 
-	let l:cmd = [g:neuron_executable, "-d", g:neuron_dir, "query", "--uri", "z:zettels"]
+	let l:cmd = g:neuron_executable.' -d '.g:neuron_dir.' query --uri z:zettels'
 	if has('nvim')
 		call jobstart(l:cmd, {
 			\ 'on_stdout': function('s:refresh_cache_callback_nvim'),
