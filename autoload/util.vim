@@ -85,7 +85,7 @@ endf
 func! util#get_fzf_options(...)
 	let l:ncol = (&columns - 4) / 2
 	let l:ext = g:neuron_extension
-  let l:prompt = get(a:, 1, 'Search zettel: ')
+	let l:prompt = get(a:, 1, 'Search zettel: ')
 
 	return extend(deepcopy(g:neuron_fzf_options), [
 		\ '--prompt', l:prompt,
