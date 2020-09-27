@@ -391,3 +391,55 @@ func! neuron#toggle_backlinks()
 
 	call neuron#update_backlinks(1)
 endfunc
+
+func! neuron#add_tag()
+	let s:tag = input('Tag to add: ')
+	let s:curpos = getpos('.')
+	normal! G
+	let s:line_end_matter = search('^---', 'bW')
+	if !s:line_end_matter
+		return
+	endif
+	let s:line_start_matter = search('^---', 'bW')
+	if !s:line_start_matter
+		return
+	endif
+	call setpos('.', [s:curpos[0], s:line_end_matter, 1])
+	let s:line_tags = search('\v\c^'.g:neuron_tags_name.':', 'bW')
+
+	" no tags currently, insert and exist
+	if !s:line_tags
+		if g:neuron_tags_style == 'inline'
+			call append(s:line_end_matter - 1, g:neuron_tags_name.": [" . s:tag . "]")
+			call setpos('.', s:curpos)
+			return
+		endif
+
+		call append(s:line_end_matter - 1, [g:neuron_tags_name.":", "  - ".s:tag])
+		call setpos('.', s:curpos)
+		return
+	endif
+
+	" tags are already there, add in
+	"TODO: handle different style to setting
+	if g:neuron_tags_style == 'inline'
+		let s:all_tags = matchlist(getline(s:line_tags), '\v\[(.*)\]')
+		let s:tag_name = matchlist(getline(s:line_tags), '\v\c^(.*):')[1]
+		let s:new_tags = s:tag_name.': ['.s:all_tags.', '.s:tag.']'
+		call setline(s:line_tags, s:new_tags)
+		call setpos('.', s:curpos)
+		return
+	endif
+
+	call setpos('.', [s:curpos[0], s:line_tags, 1])
+	let s:line_next = search('\v^(\a*):', 'W', s:line_end_matter)
+	if empty(s:line_next)
+		let s:line_next = s:line_end_matter
+	endif
+	call append(s:line_next - 1, '  - '.s:tag)
+	call setpos('.', s:curpos)
+endfunc
+
+func! neuron#search_tag()
+  let s:tag = input('Search by tag: ')
+endfunc
