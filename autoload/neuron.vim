@@ -392,8 +392,12 @@ func! neuron#toggle_backlinks()
 	call neuron#update_backlinks(1)
 endfunc
 
-func! neuron#add_tag()
-	let l:tag = input('Tag to add: ')
+func! neuron#add_tag(...)
+	let l:tag = get(a:, 1, 0)
+	if empty(l:tag)
+		let l:tag = input('Tag to add: ')
+	endif
+
 	let l:curpos = getpos('.')
 	normal! G
 	let l:line_end_matter = search('^---', 'bW')
@@ -440,6 +444,27 @@ func! neuron#add_tag()
 	call setpos('.', l:curpos)
 endfunc
 
+func! neuron#add_existing_tag()
+	let l:cmd = g:neuron_executable.' -d '.g:neuron_dir.' query -u z:tags'
+	let l:data = system(l:cmd)
+	let l:tags = json_decode(data)["result"]
+	if empty(l:tags)
+		return
+	endif
+
+	let l:existing_tags_search = []
+	for t in l:tags
+		call add(l:existing_tags_search, t['name'])
+	endfor
+
+	call fzf#run(fzf#wrap({
+		\ 'options': util#get_fzf_options('Insert tag: '),
+		\ 'source': l:existing_tags_search,
+		\ 'sink': function('neuron#add_tag'),
+	\ }, g:neuron_fullscreen_search))
+
+endfunc
+
 func! neuron#search_tag()
 	let l:tag = input('Search by tag: ')
 
@@ -455,8 +480,6 @@ func! neuron#search_tag()
 	for z in l:zettels
 		call add(l:zettel_tag_search, z['zettelID'].":".substitute(z['zettelTitle'], ':', '-', ''))
 	endfor
-
-	let l:options = util#get_fzf_options()
 
 	call fzf#run(fzf#wrap({
 		\ 'options': util#get_fzf_options('Search tag: '.l:tag),
