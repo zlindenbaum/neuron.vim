@@ -29,6 +29,9 @@ g:neuron_executable         Path to neuron. Default >
 g:neuron_extension          Zettel file extension. Default: >
                             let g:neuron_extension = '.md'
 
+g:neuron_titleid            To use titles as zettel ids or not. Default: >
+                            let g:neuron_titleid = 0
+
 g:neuron_fullscreen_search  If fzf searches are to occupy the entire screen. Default: >
                             let g:neuron_fullscreen_search = 0
 
