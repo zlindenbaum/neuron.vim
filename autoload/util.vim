@@ -101,11 +101,7 @@ func! util#zettel_id_from_path(path)
 endf
 
 func! util#new_zettel_path(title)
-	let l:id = system("od -An -N 4 -t 'x4' /dev/random")
-	if !empty(a:title) && g:neuron_titleid
-		let l:id = a:title
-	endif
-	let l:id = trim(l:id)
+	let l:id = trim(g:NeuronGenerateID(a:title))
 	return g:neuron_dir.l:id.g:neuron_extension
 endf
 

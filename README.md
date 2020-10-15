@@ -35,3 +35,18 @@ Plug 'fiatjaf/neuron.vim'
  10. To create a new blank zettel, type `gzn`.
  11. If you type `gzN` you will create a new zettel using the current word under the cursor as its title. If you're in visual selection mode `gzN` will instead use the selected text (only the first line if there are more than one selected). `gzN` will always replace the selected text or current word with a link to the newly-created zettel.
  12. `gzs` works like `gzz`, but instead it searches the content of the zettels, not only the title. For this it calls the external command `ag`.
+
+## Customization
+
+  - `neuron.vim` uses the `g:NeuronGenerateID` function to generate ids for new zettels that it creates, bypassing `neuron new` completely. By default it generates a random hex string of 8 characters. You can redefine the `g:NeuronGenerateID` function in your `.vimrc` file to use anything you prefer. For example:
+
+    To make it use the title as ID (when using `gzN`) or falling back to the random on `gzn`:
+
+    ```
+    func! g:NeuronGenerateID(title)
+    	if empty(a:title)
+    		return system("od -An -N 4 -t 'x4' /dev/random")
+    	endif
+    	return a:title
+    endf
+    ```
