@@ -43,7 +43,7 @@ endf
 func! neuron#insert_zettel_select(as_folgezettel)
 	if !exists("g:_neuron_zettels_by_id")
 		echo "Waiting until cache is populated..."
-		let g:_neuron_queued_function = ['neuron#insert_zettel_select', [as_folgezettel]]
+		let g:_neuron_queued_function = ['neuron#insert_zettel_select', [a:as_folgezettel]]
 		return
 	end
 
