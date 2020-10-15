@@ -100,3 +100,19 @@ endf
 func! util#zettel_id_from_path(path)
 	return fnamemodify(a:path, ':t:r')
 endf
+
+func! util#new_zettel_path(title)
+	let l:id = trim(g:NeuronGenerateID(a:title))
+	return g:neuron_dir.l:id.g:neuron_extension
+endf
+
+func! util#add_empty_zettel_body(title)
+	let l:body = [
+	  \ '---',
+	  \ 'date: '.strftime("%Y-%m-%dT%H:%M"),
+	  \ '---',
+	  \ '',
+	  \ '# '.a:title
+	\ ]
+	call append(0, l:body)
+endf

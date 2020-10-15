@@ -31,6 +31,11 @@ g:neuron_executable         Path to neuron. Default >
 g:neuron_extension          Zettel file extension. Default: >
                             let g:neuron_extension = '.md'
 
+g:NeuronGenerateID          Function called to generate an id for a new Zettel. Default: >
+                            func! RandomID(title)
+                            	return system("od -An -N 4 -t 'x4' /dev/random")
+                            endf
+
 g:neuron_fullscreen_search  If fzf searches are to occupy the entire screen. Default: >
                             let g:neuron_fullscreen_search = 0
 
