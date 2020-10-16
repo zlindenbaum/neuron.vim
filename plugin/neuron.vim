@@ -20,19 +20,6 @@ let g:neuron_fzf_options = get(g:, 'neuron_fzf_options', ['-d',':','--with-nth',
 let g:neuron_inline_backlinks = get(g:, 'neuron_inline_backlinks', 1)
 let g:neuron_no_mappings = get(g:, 'neuron_no_mappings', 0)
 
-func! RandomID(title)
-	return system("od -An -N 4 -t 'x4' /dev/random")
-endf
-
-" mega-customization through functions to generate the zettel id
-func! g:NeuronGenerateID(title)
-	if exists('*g:CustomNeuronIDGenerator')
-		return g:CustomNeuronIDGenerator(a:title)
-	else
-		return RandomID(a:title)
-	endif
-endfunc
-
 let g:_neuron_rib_job = -1
 
 nm <silent> <Plug>NeuronRibStop :<C-U>call rpc#stop_server()<cr>

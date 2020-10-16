@@ -101,9 +101,23 @@ func! util#zettel_id_from_path(path)
 endf
 
 func! util#new_zettel_path(title)
-	let l:id = trim(g:NeuronGenerateID(a:title))
-	return g:neuron_dir.l:id.g:neuron_extension
+	return g:neuron_dir.util#generate_id(a:title).g:neuron_extension
 endf
+
+func! util#generate_id(title)
+	let l:id = ""
+
+	" mega-customization through functions to generate the zettel id
+	if exists('*g:CustomNeuronIDGenerator')
+		let l:id = g:CustomNeuronIDGenerator(a:title)
+	endif
+
+	if empty(l:id)
+		let l:id = system("od -An -N 4 -t 'x4' /dev/random")
+	endif
+
+	return trim(l:id)
+endfunc
 
 func! util#add_empty_zettel_body(title)
 	let l:body = [

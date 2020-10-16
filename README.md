@@ -38,18 +38,14 @@ Plug 'fiatjaf/neuron.vim'
 
 ## Customization
 
-  - `neuron.vim` uses the `g:NeuronGenerateID` function to generate ids for new zettels that it creates, bypassing `neuron new` completely. By default it generates a random hex string of 8 characters. You can hook into the `g:NeuronGenerateID` function in your `.vimrc` file to use anything you prefer as an ID, by defining a function `g:CustomNeuronIDGenerator`. For example:
+  - `neuron.vim` uses a custom function to generate ids for new zettels that it creates, bypassing `neuron new` completely. By default it generates a random hex string of 8 characters. You can hook into the process by defining a function `g:CustomNeuronIDGenerator` in your `.vimrc` that takes an optional `title` argument. For example:
 
-    To make it use the title as ID (when using `gzN`) or falling back to the random on `gzn`:
+    To make it use the title as kebab-cased ID (when using `gzN`):
 
     ```
     func! g:CustomNeuronIDGenerator(title)
-    	if empty(a:title)
-    		return system("od -An -N 4 -t 'x4' /dev/random")
-    	endif
-    	return a:title
+    	return substitute(a:title, " ", "-", "g")
     endf
     ```
 
-  If `g:CustomNeuronIDGenerator` is not defined in your dotfiles, `neuron.vim`
-  will fall back to generating random IDs.
+    If `g:CustomNeuronIDGenerator` is not defined in your `.vimrc` or returns an empty string, `neuron.vim` will fall back to generating random IDs.
