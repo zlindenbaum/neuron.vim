@@ -22,12 +22,6 @@ let g:neuron_no_mappings = get(g:, 'neuron_no_mappings', 0)
 let g:neuron_tags_name = get(g:, 'neuron_tags_name', 'tags')
 let g:neuron_tags_style = get(g:, 'neuron_tags_style', 'multiline')
 
-" mega-customization through functions to generate the zettel id
-func! RandomID(title)
-	return system("od -An -N 4 -t 'x4' /dev/random")
-endf
-let g:NeuronGenerateID = get(g:, 'NeuronGenerateID', function('RandomID'))
-
 let g:_neuron_rib_job = -1
 
 nm <silent> <Plug>NeuronRibStop :<C-U>call rpc#stop_server()<cr>
