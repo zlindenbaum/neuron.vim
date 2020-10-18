@@ -50,25 +50,6 @@ g:neuron_inline_backlinks   If set to 1, then inline backlinks will be shown at 
 g:neuron_no_mappings        If this is set to 1 no mappings will be created. Default: >
                             let g:neuron_no_mappings = 0
 
-g:neuron_tags_name          The name of the tags key to use in the front matter block.
-                            Default: >
-                            let g:neuron_tags_name = 'tags'
-
-g:neuron_tags_style         The style used for tags. Either 'inline' or 'multiline'.
-                            'inline' tags look like this: >
-
-                            tags: [vim, technology, cats]
-<
-                            Whilst 'multiline' tags look like this: >
-
-                            tags:
-                              - vim
-                              - technology
-                              - cats
-<
-                            Default: >
-                            let g:neuron_tags_style = 'multiline'
-
 
 MAPPINGS                                        *neuron.vim-mappings*
 >
@@ -90,8 +71,6 @@ MAPPINGS                                        *neuron.vim-mappings*
 	nm gzL :<C-U>call neuron#insert_zettel_last(1)<cr>
 	nm gzI :<C-U>call neuron#insert_zettel_select(1)<cr>
 	nm gzv <Plug>ToggleBacklinks
-	nm gzt <Plug>AddTag
-	nm gzT <Plug>SearchTag
 
 
 ABOUT                                           *neuron.vim-about*
