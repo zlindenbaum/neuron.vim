@@ -26,7 +26,7 @@ nm <silent> <Plug>EditZettelSearchContentUnderCursor :<C-U>call neuron#search_co
 nm <silent> <Plug>EditZettelNewFromCword :<C-U>call neuron#edit_zettel_new_from_cword()<cr>
 nm <silent> <Plug>EditZettelNewFromVisual :<C-U>call neuron#edit_zettel_new_from_visual()<cr>
 nm <silent> <Plug>EditZettelLast :<C-U>call neuron#edit_zettel_last()<cr>
-nm <silent> <Plug>NeuronRefreshCache :<C-U>call neuron#refresh_cache()<cr>
+nm <silent> <Plug>NeuronRefreshCache :<C-U>call neuron#refresh_cache(1)<cr>
 nm <silent> <Plug>EditZettelSelect :<C-U>call neuron#edit_zettel_select()<cr>
 nm <silent> <Plug>EditZettelBacklink :<C-U>call neuron#edit_zettel_backlink()<cr>
 nm <silent> <Plug>EditZettelUnderCursor :<C-U>call neuron#edit_zettel_under_cursor()<cr>
