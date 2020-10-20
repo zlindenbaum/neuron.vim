@@ -20,10 +20,6 @@ let g:neuron_fzf_options = get(g:, 'neuron_fzf_options', ['-d',':','--with-nth',
 let g:neuron_inline_backlinks = get(g:, 'neuron_inline_backlinks', 1)
 let g:neuron_no_mappings = get(g:, 'neuron_no_mappings', 0)
 
-let g:_neuron_rib_job = -1
-
-nm <silent> <Plug>NeuronRibStop :<C-U>call rpc#stop_server()<cr>
-nm <silent> <Plug>NeuronRibStart :<C-U>call rpc#start_server()<cr>
 nm <silent> <Plug>EditZettelNew :<C-U>call neuron#edit_zettel_new()<cr>
 nm <silent> <Plug>EditZettelSearchContent :<C-U>call neuron#search_content(0)<cr>
 nm <silent> <Plug>EditZettelSearchContentUnderCursor :<C-U>call neuron#search_content(1)<cr>
@@ -42,7 +38,6 @@ if !exists("g:neuron_no_mappings") || ! g:neuron_no_mappings
 	nm gzn <Plug>EditZettelNew
 	nm gzN <Plug>EditZettelNewFromCword
 	vm gzN <esc><Plug>EditZettelNewFromVisual
-	nm gzb <Plug>NeuronRibStart
 	nm gzr <Plug>NeuronRefreshCache
 	nm gzu <Plug>EditZettelLast
 	nm gzU :<C-U>call neuron#move_history(-1)<cr>
@@ -58,9 +53,6 @@ if !exists("g:neuron_no_mappings") || ! g:neuron_no_mappings
 	nm gzI :<C-U>call neuron#insert_zettel_select(1)<cr>
 	nm gzv <Plug>ToggleBacklinks
 end
-
-com! NeuronRibStart :call rpc#start_server()
-com! NeuronRibStop  :call rpc#stop_server()
 
 " refresh the cache now if we are in a zettelkasten dir
 if filereadable(g:neuron_dir."neuron.dhall")

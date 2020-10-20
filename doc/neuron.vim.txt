@@ -56,7 +56,6 @@ MAPPINGS                                        *neuron.vim-mappings*
 	nm gzn <Plug>EditZettelNew
 	nm gzN <Plug>EditZettelNewFromCword
 	vm gzN <esc><Plug>EditZettelNewFromVisual
-	nm gzb <Plug>NeuronRibStart
 	nm gzr <Plug>NeuronRefreshCache
 	nm gzu <Plug>EditZettelLast
 	nm gzU :<C-U>call neuron#move_history(-1)<cr>
