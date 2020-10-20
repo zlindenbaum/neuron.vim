@@ -6,6 +6,7 @@ INTRODUCTION                                    *neuron.vim*
 
 neuron.vim manages your zettelkasten. You can search, create, navigate and open your zettels using fzf and neuron.
 
+
 CONFIGURATION                                   *neuron.vim-configuration*
 g:CustomNeuronIDGenerator   Hook function to define your own strategy for generating the
                             IDs of new Zettel notes. Accepts a string 'title' parameter,
@@ -49,6 +50,7 @@ g:neuron_inline_backlinks   If set to 1, then inline backlinks will be shown at 
 g:neuron_no_mappings        If this is set to 1 no mappings will be created. Default: >
                             let g:neuron_no_mappings = 0
 
+
 MAPPINGS                                        *neuron.vim-mappings*
 >
 	nm gzn <Plug>EditZettelNew
@@ -69,6 +71,7 @@ MAPPINGS                                        *neuron.vim-mappings*
 	nm gzL :<C-U>call neuron#insert_zettel_last(1)<cr>
 	nm gzI :<C-U>call neuron#insert_zettel_select(1)<cr>
 	nm gzv <Plug>ToggleBacklinks
+
 
 ABOUT                                           *neuron.vim-about*
 

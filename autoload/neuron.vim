@@ -1,4 +1,5 @@
 let g:_neuron_queued_function = []
+let g:_neuron_cache_add_titles = 1
 
 func! neuron#add_virtual_titles()
 	if !exists("g:_neuron_zettels_by_id")
@@ -43,7 +44,7 @@ endf
 func! neuron#insert_zettel_select(as_folgezettel)
 	if !exists("g:_neuron_zettels_by_id")
 		echo "Waiting until cache is populated..."
-		let g:_neuron_queued_function = ['neuron#insert_zettel_select', [as_folgezettel]]
+		let g:_neuron_queued_function = ['neuron#insert_zettel_select', [a:as_folgezettel]]
 		return
 	end
 
@@ -208,13 +209,14 @@ func! neuron#edit_zettel(zettel_id)
 	exec 'edit '.g:neuron_dir.a:zettel_id.g:neuron_extension
 endf
 
-func! neuron#refresh_cache()
+func! neuron#refresh_cache(add_titles)
 	if !executable(g:neuron_executable)
 		echo "neuron executable not found!"
 		return
 	endif
 
-	let l:cmd = g:neuron_executable.' -d '.g:neuron_dir.' query --uri z:zettels'
+	let g:_neuron_cache_add_titles = a:add_titles
+	let l:cmd = g:neuron_executable.' -d "'.g:neuron_dir.'" query --uri z:zettels'
 	if has('nvim')
 		call jobstart(l:cmd, {
 			\ 'on_stdout': function('s:refresh_cache_callback_nvim'),
@@ -275,7 +277,10 @@ func! s:refresh_cache_callback(data)
 		endfor
 	endfor
 
- 	call neuron#add_virtual_titles()
+	if g:_neuron_cache_add_titles == 1
+		call neuron#add_virtual_titles()
+	endif
+	let g:_neuron_cache_add_titles = 1
 
 	if !empty(g:_neuron_queued_function)
 		call call(g:_neuron_queued_function[0], g:_neuron_queued_function[1])
@@ -311,13 +316,13 @@ func! neuron#on_enter()
 		return
 	endif
 	let g:_neuron_did_init = 1
-	call neuron#refresh_cache()
+	call neuron#refresh_cache(1)
 endf
 
 let g:_neuron_must_refresh_on_write = 0
 func! neuron#on_write()
 	if g:_neuron_must_refresh_on_write
-		call neuron#refresh_cache()
+		call neuron#refresh_cache(1)
 	else
 		call neuron#add_virtual_titles()
 	end

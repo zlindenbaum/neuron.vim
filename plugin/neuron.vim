@@ -62,4 +62,14 @@ end
 com! NeuronRibStart :call rpc#start_server()
 com! NeuronRibStop  :call rpc#stop_server()
 
+" refresh the cache now if we are in a zettelkasten dir
+if filereadable(g:neuron_dir."neuron.dhall")
+	let current_file = expand("%:p")
+	if empty(current_file)
+		call neuron#refresh_cache(0)
+	else
+		call neuron#refresh_cache(1)
+	endif
+endif
+
 " : vim: set fdm=marker :
