@@ -19,6 +19,8 @@ let g:neuron_fullscreen_search = get(g:, 'neuron_fullscreen_search', 0)
 let g:neuron_fzf_options = get(g:, 'neuron_fzf_options', ['-d',':','--with-nth','2'])
 let g:neuron_inline_backlinks = get(g:, 'neuron_inline_backlinks', 1)
 let g:neuron_no_mappings = get(g:, 'neuron_no_mappings', 0)
+let g:neuron_tags_name = get(g:, 'neuron_tags_name', 'tags')
+let g:neuron_tags_style = get(g:, 'neuron_tags_style', 'multiline')
 
 let g:_neuron_rib_job = -1
 
@@ -37,6 +39,8 @@ nm <silent> <Plug>EditZettelUnderCursor :<C-U>call neuron#edit_zettel_under_curs
 nm <silent> <Plug>InsertZettelLast :<C-U>call neuron#insert_zettel_last(0)<cr>
 nm <silent> <Plug>InsertZettelSelect :<C-U>call neuron#insert_zettel_select(0)<cr>
 nm <silent> <Plug>ToggleBacklinks :<C-U>call neuron#toggle_backlinks()<cr>
+nm <silent> <Plug>AddTag :<C-U>call neuron#add_tag()<cr>
+nm <silent> <Plug>SearchTag :<C-U>call neuron#search_tag()<cr>
 
 if !exists("g:neuron_no_mappings") || ! g:neuron_no_mappings
 	nm gzn <Plug>EditZettelNew
@@ -57,9 +61,21 @@ if !exists("g:neuron_no_mappings") || ! g:neuron_no_mappings
 	nm gzL :<C-U>call neuron#insert_zettel_last(1)<cr>
 	nm gzI :<C-U>call neuron#insert_zettel_select(1)<cr>
 	nm gzv <Plug>ToggleBacklinks
+	nm gzt <Plug>AddTag
+	nm gzT <Plug>SearchTag
 end
 
 com! NeuronRibStart :call rpc#start_server()
 com! NeuronRibStop  :call rpc#stop_server()
+
+" refresh the cache now if we are in a zettelkasten dir
+if filereadable(g:neuron_dir."neuron.dhall")
+	let current_file = expand("%:p")
+	if empty(current_file)
+		call neuron#refresh_cache(0)
+	else
+		call neuron#refresh_cache(1)
+	endif
+endif
 
 " : vim: set fdm=marker :

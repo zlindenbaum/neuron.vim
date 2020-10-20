@@ -82,12 +82,13 @@ func! util#zettel_date_getter(z)
 	return join(l:date)
 endf
 
-func! util#get_fzf_options()
+func! util#get_fzf_options(...)
 	let l:ncol = (&columns - 4) / 2
 	let l:ext = g:neuron_extension
+	let l:prompt = get(a:, 1, 'Search zettel: ')
 
 	return extend(deepcopy(g:neuron_fzf_options), [
-		\ '--prompt', 'Search zettel: ',
+		\ '--prompt', l:prompt,
 		\ '--preview', "echo {} | sed 's/:.*/".l:ext."/' | xargs fold -w ".l:ncol." -s"
 	\ ])
 endf

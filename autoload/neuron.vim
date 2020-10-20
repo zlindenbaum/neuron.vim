@@ -1,4 +1,5 @@
 let g:_neuron_queued_function = []
+let g:_neuron_cache_add_titles = 1
 
 func! neuron#add_virtual_titles()
 	if !exists("g:_neuron_zettels_by_id")
@@ -43,7 +44,7 @@ endf
 func! neuron#insert_zettel_select(as_folgezettel)
 	if !exists("g:_neuron_zettels_by_id")
 		echo "Waiting until cache is populated..."
-		let g:_neuron_queued_function = ['neuron#insert_zettel_select', [as_folgezettel]]
+		let g:_neuron_queued_function = ['neuron#insert_zettel_select', [a:as_folgezettel]]
 		return
 	end
 
@@ -208,13 +209,14 @@ func! neuron#edit_zettel(zettel_id)
 	exec 'edit '.g:neuron_dir.a:zettel_id.g:neuron_extension
 endf
 
-func! neuron#refresh_cache()
+func! neuron#refresh_cache(add_titles)
 	if !executable(g:neuron_executable)
 		echo "neuron executable not found!"
 		return
 	endif
 
-	let l:cmd = g:neuron_executable.' -d '.g:neuron_dir.' query --uri z:zettels'
+	let g:_neuron_cache_add_titles = a:add_titles
+	let l:cmd = g:neuron_executable.' -d "'.g:neuron_dir.'" query --uri z:zettels'
 	if has('nvim')
 		call jobstart(l:cmd, {
 			\ 'on_stdout': function('s:refresh_cache_callback_nvim'),
@@ -275,7 +277,10 @@ func! s:refresh_cache_callback(data)
 		endfor
 	endfor
 
- 	call neuron#add_virtual_titles()
+	if g:_neuron_cache_add_titles == 1
+		call neuron#add_virtual_titles()
+	endif
+	let g:_neuron_cache_add_titles = 1
 
 	if !empty(g:_neuron_queued_function)
 		call call(g:_neuron_queued_function[0], g:_neuron_queued_function[1])
@@ -311,13 +316,13 @@ func! neuron#on_enter()
 		return
 	endif
 	let g:_neuron_did_init = 1
-	call neuron#refresh_cache()
+	call neuron#refresh_cache(1)
 endf
 
 let g:_neuron_must_refresh_on_write = 0
 func! neuron#on_write()
 	if g:_neuron_must_refresh_on_write
-		call neuron#refresh_cache()
+		call neuron#refresh_cache(1)
 	else
 		call neuron#add_virtual_titles()
 	end
@@ -395,4 +400,100 @@ func! neuron#toggle_backlinks()
 	endfor
 
 	call neuron#update_backlinks(1)
+endfunc
+
+func! neuron#add_tag(...)
+	let l:tag = get(a:, 1, 0)
+	if empty(l:tag)
+		let l:tag = input('Tag to add: ')
+	endif
+
+	let l:curpos = getpos('.')
+	normal! G
+	let l:line_end_matter = search('^---', 'bW')
+	if !l:line_end_matter
+		return
+	endif
+	let l:line_start_matter = search('^---', 'bW')
+	if !l:line_start_matter
+		return
+	endif
+	call setpos('.', [l:curpos[0], l:line_end_matter, 1])
+	let l:line_tags = search('\v\c^'.g:neuron_tags_name.':', 'bW')
+
+	" no tags currently, insert and exist
+	if !l:line_tags
+		if g:neuron_tags_style == 'inline'
+			call append(l:line_end_matter - 1, g:neuron_tags_name.": [" . l:tag . "]")
+			call setpos('.', l:curpos)
+			return
+		endif
+
+		call append(l:line_end_matter - 1, [g:neuron_tags_name.":", "  - ".l:tag])
+		call setpos('.', l:curpos)
+		return
+	endif
+
+	" tags are already there, add in
+	"TODO: handle different style to setting
+	if g:neuron_tags_style == 'inline'
+		let l:all_tags = matchlist(getline(l:line_tags), '\v\[(.*)\]')
+		let l:tag_name = matchlist(getline(l:line_tags), '\v\c^(.*):')[1]
+		let l:new_tags = l:tag_name.': ['.l:all_tags.', '.l:tag.']'
+		call setline(l:line_tags, l:new_tags)
+		call setpos('.', l:curpos)
+		return
+	endif
+
+	call setpos('.', [l:curpos[0], l:line_tags, 1])
+	let l:line_next = search('\v^(\a*):', 'W', l:line_end_matter)
+	if empty(l:line_next)
+		let l:line_next = l:line_end_matter
+	endif
+	call append(l:line_next - 1, '  - '.l:tag)
+	call setpos('.', l:curpos)
+endfunc
+
+func! neuron#add_existing_tag()
+	let l:cmd = g:neuron_executable.' -d '.g:neuron_dir.' query -u z:tags'
+	let l:data = system(l:cmd)
+	let l:tags = json_decode(data)["result"]
+	if empty(l:tags)
+		return
+	endif
+
+	let l:existing_tags_search = []
+	for t in l:tags
+		call add(l:existing_tags_search, t['name'])
+	endfor
+
+	call fzf#run(fzf#wrap({
+		\ 'options': util#get_fzf_options('Insert tag: '),
+		\ 'source': l:existing_tags_search,
+		\ 'sink': function('neuron#add_tag'),
+	\ }, g:neuron_fullscreen_search))
+
+endfunc
+
+func! neuron#search_tag()
+	let l:tag = input('Search by tag: ')
+
+	let l:cmd = g:neuron_executable.' -d '.g:neuron_dir.' query -t '.l:tag
+	let l:data = system(l:cmd)
+	let l:zettels = json_decode(data)["result"]
+	if empty(l:zettels)
+		echom 'No results.'
+		return
+	endif
+
+	let l:zettel_tag_search = []
+	for z in l:zettels
+		call add(l:zettel_tag_search, z['zettelID'].":".substitute(z['zettelTitle'], ':', '-', ''))
+	endfor
+
+	call fzf#run(fzf#wrap({
+		\ 'options': util#get_fzf_options('Search tag: '.l:tag),
+		\ 'source': l:zettel_tag_search,
+		\ 'sink': function('util#edit_shrink_fzf'),
+	\ }, g:neuron_fullscreen_search))
 endfunc
