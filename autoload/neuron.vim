@@ -253,6 +253,8 @@ func s:refresh_cache_callback_nvim(id, data, event)
 endf
 
 func! s:refresh_cache_callback(data)
+  " echom 'callback'
+	" call writefile(split(a:data, "\n", 1), glob('/Users/mjw/dump.txt'), 'a')
 	let l:zettels = json_decode(a:data)["result"]
 
 	call sort(l:zettels, function('util#zettel_date_sorter'))
@@ -272,7 +274,10 @@ func! s:refresh_cache_callback(data)
 	for z in l:zettels
 		for l in z['zettelQueries']
 			if l[0] == 'ZettelQuery_ZettelByID'
-				call add(g:_neuron_backlinks[l[1][0]], z['zettelID'])
+				let l:key = l[1][0]
+				if has_key(g:_neuron_backlinks, l:key)
+					call add(g:_neuron_backlinks[l[1][0]], z['zettelID'])
+				endif
 			endif
 		endfor
 	endfor
