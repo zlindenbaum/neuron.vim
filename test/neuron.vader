@@ -18,7 +18,6 @@ Execute (s:deform_zettelid):
   AssertEqual util#deform_zettelid('<myzettelid>'), 'myzettelid'
   AssertEqual util#deform_zettelid('<myzettelid?cf>'), 'myzettelid'
 
-
 Execute (util#get_formatted_zettelid):
   AssertThrows util#get_formatted_zettelid('notazettelid')
   AssertThrows util#get_formatted_zettelid('0620e9c1')
