@@ -40,7 +40,9 @@ g:neuron_extension          Zettel file extension. Default: >
 g:neuron_fullscreen_search  If fzf searches are to occupy the entire screen. Default: >
                             let g:neuron_fullscreen_search = 0
 
-g:neuron_fzf_options        Change the fzf parameters. Default: >
+g:neuron_fzf_options        Change the fzf parameters. Note that the default
+                            options are required for proper functioning when filtering of
+                            zettels. Default: >
                             let g:neuron_fzf_options = ['-d',':','--with-nth','2']
 
 g:neuron_inline_backlinks   If set to 1, then inline backlinks will be shown at the
@@ -49,6 +51,25 @@ g:neuron_inline_backlinks   If set to 1, then inline backlinks will be shown at 
 
 g:neuron_no_mappings        If this is set to 1 no mappings will be created. Default: >
                             let g:neuron_no_mappings = 0
+
+g:neuron_tags_name          The key to use for specifying tags. Default: >
+                            let g:neuron_tags_name = 'tags'
+
+g:neuron_tags_style         The style of tags used when updating and inserting
+                            tags. Can be either 'inline' or 'multiline'.
+                            Inline tags look like this: >
+
+                            tags: [vim,programming,advanced]
+<
+                            Multiline look like this: >
+
+                            tags:
+                              - vim
+                              - programming
+                              - advanced
+<
+                            Default: >
+                            let g:neuron_tags_style = 'multiline'
 
 
 MAPPINGS                                        *neuron.vim-mappings*
