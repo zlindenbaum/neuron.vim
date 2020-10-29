@@ -37,6 +37,7 @@ nm <silent> <Plug>InsertZettelSelect :<C-U>call neuron#insert_zettel_select(0)<c
 nm <silent> <Plug>ToggleBacklinks :<C-U>call neuron#toggle_backlinks()<cr>
 nm <silent> <Plug>TagsAddNew :<C-U>call neuron#tags_add_new()<cr>
 nm <silent> <Plug>TagsAddSelect :<C-U>call neuron#tags_add_select()<cr>
+nm <silent> <Plug>TagsZettelSearch :<C-U>call neuron#tags_search()<cr>
 
 if !exists("g:neuron_no_mappings") || ! g:neuron_no_mappings
 	nm gzn <Plug>EditZettelNew
@@ -58,6 +59,7 @@ if !exists("g:neuron_no_mappings") || ! g:neuron_no_mappings
 	nm gzv <Plug>ToggleBacklinks
 	nm gzt <Plug>TagsAddNew
 	nm gzT <Plug>TagsAddSelect
+	nm gzts <Plug>TagsZettelSearch
 end
 
 " refresh the cache now if we are in a zettelkasten dir

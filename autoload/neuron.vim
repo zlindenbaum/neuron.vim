@@ -477,7 +477,7 @@ func! neuron#tags_position()
 	call setpos('.', [l:curpos[0], l:line_end_matter, 1])
 
 	let l:line_tags = search('\v\c^'.g:neuron_tags_name.':', 'bW')
-  if !l:line_tags
+	if !l:line_tags
 		"no tags key
 		call setpos('.', l:curpos)
 
