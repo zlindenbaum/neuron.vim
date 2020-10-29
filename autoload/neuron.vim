@@ -404,3 +404,214 @@ func! neuron#toggle_backlinks()
 
 	call neuron#update_backlinks(1)
 endfunc
+
+" Parse the current tags and return a list
+func! neuron#tags_parse()
+	let [l:line_tags, l:line_tags_end] = neuron#tags_position()
+
+	if l:line_tags == -1
+		return
+	endif
+
+	let l:all_tags = []
+
+	if l:line_tags_end - l:line_tags == 1
+		"handle single line
+		let l:tags = matchlist(getline(l:line_tags), '\v\[(.*)\]')
+		if empty(l:tags)
+			"nothing, blank line
+			return l:all_tags
+		else
+			if empty(l:tags[1])
+				" here it would be []
+				return l:all_tags
+			else
+				let l:tags = l:tags[1]
+				let l:all_tags = split(l:tags, ',')
+				let l:i = 0
+				for tag in l:all_tags
+					let l:all_tags[l:i] = trim(tag)
+					let l:i += 1
+				endfor
+
+				return l:all_tags
+			endif
+		endif
+	endif
+
+	"handle multiline
+	let l:i = l:line_tags + 1
+	while l:i < l:line_tags_end
+		let l:line = getline(l:i)
+		"match from start of line then any number of spaces,
+		"then a dash (-), then any number of spaces, then everything to the end of the line
+		echom getline(l:i)
+		let l:tag = matchlist(getline(l:i), '\v^\s*-\s*(.+)$')
+		if !empty(l:tag)
+			call add(l:all_tags, l:tag)
+		endif
+		let l:i += 1
+	endwhile
+
+	return l:all_tags
+endfunc
+
+" Work out where the current tags are if they are present at all
+" Returns list of the start and end lines
+func! neuron#tags_position()
+	let l:curpos = getpos('.')
+	normal! G
+	let l:line_end_matter = search('^---', 'bW')
+	if !l:line_end_matter
+		echom "No front matter found."
+
+		return [-1, -1]
+	endif
+	let l:line_start_matter = search('^---', 'bW')
+	if !l:line_start_matter
+		echom "No front matter found."
+
+		return [-1, -1]
+	endif
+
+	call setpos('.', [l:curpos[0], l:line_end_matter, 1])
+
+	let l:line_tags = search('\v\c^'.g:neuron_tags_name.':', 'bW')
+  if !l:line_tags
+		"no tags key
+		call setpos('.', l:curpos)
+
+		return [0, 0]
+	endif
+
+	let l:line_tags_end = l:line_end_matter
+
+	 "search down to the next key
+	call setpos('.', [l:curpos[0], l:line_tags, 1])
+	let l:next_key = search('\v^\w+:', 'n', l:line_end_matter)
+	if l:next_key > 0
+		let l:line_tags_end = l:next_key
+	endif
+
+	call setpos('.', l:curpos)
+
+	return [l:line_tags, l:line_tags_end]
+endfunc
+
+" Update the current tags with the passed in tag
+func! neuron#tags_update(tag)
+	let l:curpos = getpos('.')
+
+	"add tag to list of current tags
+	let l:tag = trim(a:tag)
+	let l:tags = neuron#tags_parse()
+	if len(l:tags) == 0
+		call add(l:tags, l:tag)
+	else
+		let l:found = 0
+		for t in l:tags
+			if t == l:tag
+				let l:found = 1
+			endif
+		endfor
+		if l:found == 1
+			echom "Tag already exists."
+
+			return
+		else
+			call add(l:tags, l:tag)
+		endif
+	endif
+
+	let [l:line_tags, l:line_tags_end] = neuron#tags_position()
+
+	if l:line_tags == -1
+		return
+	endif
+
+	"handle if there is no current tags key
+	if l:line_tags == 0
+		"go to end, search backwards to front matter sep
+		normal! G
+		let l:line_tags = search('^---', 'bW')
+	else
+		call deletebufline('', l:line_tags, l:line_tags_end - 1)
+	endif
+
+	"inline
+	if g:neuron_tags_style == 'inline'
+		call append(l:line_tags - 1, g:neuron_tags_name.": [" . join(l:tags,',') . "]")
+		call setpos('.', l:curpos)
+
+		return
+	endif
+
+	"multiline
+	call append(l:line_tags - 1, g:neuron_tags_name.":")
+	let l:offset = 0
+	for t in l:tags
+		call append(l:line_tags + l:offset, '  - ' . t)
+		let l:offset += 1
+	endfor
+
+	call setpos('.', l:curpos)
+endfunc
+
+" Add a new tag, takes optional param of the tag
+func! neuron#tags_add_new(...)
+	let l:tag = get(a:, 1, 0)
+	if empty(l:tag)
+		let l:tag = input('Tag to add: ')
+	endif
+
+	call neuron#tags_update(l:tag)
+endfunc
+
+" Add tags from a selection list
+func! neuron#tags_add_select()
+	" TODO: use cache
+	let l:cmd = g:neuron_executable.' -d "'.g:neuron_dir.'" query -u z:tags'
+	let l:data = system(l:cmd)
+	let l:tags = json_decode(l:data)["result"]
+	if empty(l:tags)
+		echom 'No existing tags found.'
+
+		return
+	endif
+
+	let l:existing_tags_search = []
+	for t in l:tags
+		call add(l:existing_tags_search, t['name'])
+	endfor
+
+	call fzf#run(fzf#wrap({
+		\ 'options': util#get_fzf_options('Insert tag: ', 0, []),
+		\ 'source': l:existing_tags_search,
+		\ 'sink': function('neuron#tags_add_new'),
+	\ }, g:neuron_fullscreen_search))
+endfunc
+
+" Search for zettels by a given tag
+func! neuron#tags_search()
+	let l:tag = input('Search by tag: ')
+
+	"TODO: use cache
+	let l:cmd = g:neuron_executable.' -d "'.g:neuron_dir.'" query -t '.l:tag
+	let l:data = system(l:cmd)
+	let l:zettels = json_decode(data)["result"]
+	if empty(l:zettels)
+		echom 'No results.'
+		return
+	endif
+
+	let l:zettel_tag_search = []
+	for z in l:zettels
+		call add(l:zettel_tag_search, z['zettelID'].":".substitute(z['zettelTitle'], ':', '-', ''))
+	endfor
+
+	call fzf#run(fzf#wrap({
+		\ 'options': util#get_fzf_options('Search tag: '.l:tag),
+		\ 'source': l:zettel_tag_search,
+		\ 'sink': function('util#edit_shrink_fzf'),
+	\ }, g:neuron_fullscreen_search))
+endfunc
