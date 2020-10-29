@@ -91,6 +91,8 @@ MAPPINGS                                        *neuron.vim-mappings*
 	nm gzL :<C-U>call neuron#insert_zettel_last(1)<cr>
 	nm gzI :<C-U>call neuron#insert_zettel_select(1)<cr>
 	nm gzv <Plug>ToggleBacklinks
+	nm gzt <Plug>TagsAddNew
+  nm gzT <Plug>TagsAddSelect
 
 
 ABOUT                                           *neuron.vim-about*
