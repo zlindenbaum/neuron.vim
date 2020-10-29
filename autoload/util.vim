@@ -82,15 +82,26 @@ func! util#zettel_date_getter(z)
 	return join(l:date)
 endf
 
+" get the fzf options
+" optional params of:
+" - the prompt to use
+" - whether to use preview
+" - fzf options to use if not the global ones
 func! util#get_fzf_options(...)
 	let l:ncol = (&columns - 4) / 2
 	let l:ext = g:neuron_extension
-	let l:prompt = get(a:, 1, 'Search zettel: ')
 
-	return extend(deepcopy(g:neuron_fzf_options), [
-		\ '--prompt', l:prompt,
-		\ '--preview', "echo {} | sed 's/:.*/".l:ext."/' | xargs fold -w ".l:ncol." -s"
-	\ ])
+	let l:prompt = get(a:, 1, 'Search zettel: ')
+	let l:use_preview = get(a:, 2, 1)
+	let l:ext_options = get(a:, 3, g:neuron_fzf_options)
+
+	let l:options = extend(deepcopy(l:ext_options), ['--prompt', l:prompt])
+
+	if l:use_preview == 1
+		let l:options = extend(deepcopy(l:options), ['--preview', "echo {} | sed 's/:.*/".l:ext."/' | xargs fold -w ".l:ncol." -s"])
+	endif
+
+	return l:options
 endf
 
 func! util#current_zettel()
