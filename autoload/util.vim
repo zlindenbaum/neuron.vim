@@ -84,8 +84,8 @@ endf
 
 " get the fzf options
 " optional params of:
-" - the prompt to use
-" - whether to use preview
+" - the prompt to use, default 'Search zettel: '
+" - whether to use preview, default True
 " - fzf options to use if not the global ones
 func! util#get_fzf_options(...)
 	let l:ncol = (&columns - 4) / 2

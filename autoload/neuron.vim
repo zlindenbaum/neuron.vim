@@ -41,6 +41,44 @@ func! neuron#add_virtual_titles()
 	call nvim_buf_set_virtual_text(0, l:ns, 0, [[l:backtext, "DiffChange"]], {})
 endf
 
+func! neuron#insert_reducer_folgezettel(lines)
+	let l:results = []
+	for line in a:lines
+		let l:result = '[[[' . split(line, ":")[0] . ']]]'
+		call add(l:results, l:result)
+	endfor
+	return join(l:results, ',')
+endfunc
+
+func! neuron#insert_reducer(lines)
+	let l:results = []
+	for line in a:lines
+		let l:result = '[[' . split(line, ":")[0] . ']]'
+		call add(l:results, l:result)
+	endfor
+	return join(l:results, ',')
+endfunc
+
+func! neuron#insert_zettel_complete(as_folgezettel)
+	if !exists("g:_neuron_zettels_by_id")
+		echom "Waiting until cache is populated..."
+		let g:_neuron_queued_function = ['neuron#insert_zettel_select', [a:as_folgezettel]]
+		return
+	end
+
+	if a:as_folgezettel
+		let l:reducer_to_use = 'neuron#insert_reducer_folgezettel'
+	else
+		let l:reducer_to_use = 'neuron#insert_reducer'
+	endif
+
+	return call('fzf#vim#complete', [fzf#wrap({
+		\ 'options': util#get_fzf_options('Select zettel: '),
+		\ 'source': g:_neuron_zettels_search_list,
+		\ 'reducer': function(l:reducer_to_use)
+	\ }, g:neuron_fullscreen_search)])
+endfunc
+
 func! neuron#insert_zettel_select(as_folgezettel)
 	if !exists("g:_neuron_zettels_by_id")
 		echo "Waiting until cache is populated..."
