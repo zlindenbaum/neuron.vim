@@ -483,10 +483,9 @@ func! neuron#tags_parse()
 		let l:line = getline(l:i)
 		"match from start of line then any number of spaces,
 		"then a dash (-), then any number of spaces, then everything to the end of the line
-		echom getline(l:i)
 		let l:tag = matchlist(getline(l:i), '\v^\s*-\s*(.+)$')
 		if !empty(l:tag)
-			call add(l:all_tags, l:tag)
+			call add(l:all_tags, l:tag[1])
 		endif
 		let l:i += 1
 	endwhile
@@ -543,6 +542,7 @@ func! neuron#tags_update(tag)
 	"add tag to list of current tags
 	let l:tag = trim(a:tag)
 	let l:tags = neuron#tags_parse()
+
 	if len(l:tags) == 0
 		call add(l:tags, l:tag)
 	else
