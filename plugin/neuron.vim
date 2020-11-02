@@ -21,6 +21,7 @@ let g:neuron_inline_backlinks = get(g:, 'neuron_inline_backlinks', 1)
 let g:neuron_no_mappings = get(g:, 'neuron_no_mappings', 0)
 let g:neuron_tags_name = get(g:, 'neuron_tags_name', 'tags')
 let g:neuron_tags_style = get(g:, 'neuron_tags_style', 'multiline')
+let g:neuron_tmp_filename = get(g:, 'neuron_tmp_filename', '/tmp/neuronzettelsbuffer')
 
 nm <silent> <Plug>EditZettelNew :<C-U>call neuron#edit_zettel_new()<cr>
 nm <silent> <Plug>EditZettelSearchContent :<C-U>call neuron#search_content(0)<cr>

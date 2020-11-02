@@ -264,7 +264,7 @@ func! neuron#refresh_cache(add_titles)
 		let l:jobopt = {
 			\ 'exit_cb': function('s:refresh_cache_callback_vim'),
 			\ 'out_io': 'file',
-			\ 'out_name': '/tmp/neuronzettelsbuffer',
+			\ 'out_name': g:neuron_tmp_filename,
 			\ 'err_io': 'out'
 		\ }
 		if has('patch-8.1.350')
@@ -280,8 +280,8 @@ endf
 
 " vim 8
 func! s:refresh_cache_callback_vim(channel, x)
-	let l:data = readfile("/tmp/neuronzettelsbuffer")
-	call job_start("rm /tmp/neuronzettelsbuffer")
+	let l:data = readfile(g:neuron_tmp_filename)
+	call job_start("rm " . g:neuron_tmp_filename)
 	call s:refresh_cache_callback(join(l:data))
 endf
 
