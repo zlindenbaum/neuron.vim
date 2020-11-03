@@ -309,10 +309,12 @@ func! s:refresh_cache_callback(data)
 
 	for z in l:zettels
 		for l in z['zettelQueries']
-			if l[0] == 'ZettelQuery_ZettelByID'
-				let l:key = l[1][0]
-				if has_key(g:_neuron_backlinks, l:key)
-					call add(g:_neuron_backlinks[l[1][0]], z['zettelID'])
+			if index(l, 0) > 0
+				if l[0] == 'ZettelQuery_ZettelByID'
+					let l:key = l[1][0]
+					if has_key(g:_neuron_backlinks, l:key)
+						call add(g:_neuron_backlinks[l[1][0]], z['zettelID'])
+					endif
 				endif
 			endif
 		endfor
