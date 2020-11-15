@@ -291,6 +291,9 @@ func s:refresh_cache_callback_nvim(id, data, event)
 endf
 
 func! s:refresh_cache_callback(data)
+	if (g:neuron_debug_enable)
+		call writefile(split(a:data, "\n", 1), g:neuron_dir . 'query.json')
+	endif
 	let l:zettels = json_decode(a:data)["result"]
 
 	call sort(l:zettels, function('util#zettel_date_sorter'))
