@@ -11,6 +11,13 @@ if exists("g:_neuron_loaded")
 endif
 let g:_neuron_loaded = 1
 
+let g:neuron_dir = get(g:, 'neuron_dir', fnamemodify(expand("%:p"), ":h")."/")
+
+" fallback to using getcwd if the above gives us a relative path
+if g:neuron_dir == './'
+	let g:neuron_dir = getcwd() . "/"
+endif
+
 let g:neuron_backlinks_size = get(g:, 'neuron_backlinks_size', 40)
 let g:neuron_backlinks_vsplit = get(g:, 'neuron_backlinks_vsplit', 1)
 let g:neuron_backlinks_vsplit_right = get(g:, 'neuron_backlinks_vsplit_right', 1)
