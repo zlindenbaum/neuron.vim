@@ -180,7 +180,9 @@ func! neuron#insert_zettel_last(as_folgezettel)
 endf
 
 func! neuron#edit_zettel_new()
-	w
+	if bufname('%') != ''
+		w
+	endif
 	let l:zettel_path = util#new_zettel_path('')
 	exec 'edit '.l:zettel_path
 	call util#add_empty_zettel_body('')
