@@ -8,8 +8,8 @@ endif
 
 if exists('b:did_ftdetect') | finish | endif
 aug neuron
-	exec ':au! BufRead '.fnameescape(b:neuron_dir).'*'.fnameescape(b:neuron_extension).' call neuron#add_virtual_titles()'
-	exec ':au! BufEnter '.fnameescape(b:neuron_dir).'*'.fnameescape(b:neuron_extension).' call neuron#on_enter()'
-	exec ':au! BufWrite '.fnameescape(b:neuron_dir).'*'.fnameescape(b:neuron_extension).' call neuron#on_write()'
+	exec ':au! BufRead '.fnameescape(b:neuron_dir).'*'.fnameescape(g:neuron_extension).' call neuron#add_virtual_titles()'
+	exec ':au! BufEnter '.fnameescape(b:neuron_dir).'*'.fnameescape(g:neuron_extension).' call neuron#on_enter()'
+	exec ':au! BufWrite '.fnameescape(b:neuron_dir).'*'.fnameescape(g:neuron_extension).' call neuron#on_write()'
 aug END
 let b:did_ftdetect = 1
