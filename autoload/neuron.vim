@@ -612,6 +612,23 @@ func! neuron#tags_add_new(...)
 	call neuron#tags_update(l:tag)
 endfunc
 
+" Return children for hierarchical tags
+func! neuron#tags_add_children(tag_parent, tag_name, tag_children)
+	if empty(a:tag_children)
+		return [a:tag_parent . a:tag_name]
+	endif
+
+	let l:new_tags = []
+	for l:child in a:tag_children
+		let l:child_tag = neuron#tags_add_children(a:tag_parent . a:tag_name . '/', l:child['name'], l:child['children'])
+		call extend(l:new_tags, l:child_tag)
+	endfor
+
+	call add(l:new_tags, (a:tag_parent . a:tag_name))
+
+	return l:new_tags
+endfunc
+
 " Add tags from a selection list
 func! neuron#tags_add_select()
 	" TODO: use cache
@@ -626,7 +643,8 @@ func! neuron#tags_add_select()
 
 	let l:existing_tags_search = []
 	for t in l:tags
-		call add(l:existing_tags_search, t['name'])
+		let l:child_tags = neuron#tags_add_children('', t['name'], t['children'])
+		call extend(l:existing_tags_search, l:child_tags)
 	endfor
 
 	call fzf#run(fzf#wrap({
