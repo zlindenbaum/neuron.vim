@@ -135,7 +135,7 @@ func! util#add_empty_zettel_body(title)
 	let l:body = [
 	  \ '---',
     \ 'title:    '.a:title,
-    \ 'id:       '.strftime("%Y%m%d%H%M"),
+    \ 'id:       [['.strftime("%Y%m%d%H%M").']]',
 	  \ 'date:     '.strftime("%Y-%m-%d %H:%M"),
     \ 'tags:     ',
 	  \ '---',

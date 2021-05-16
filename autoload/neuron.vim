@@ -256,7 +256,7 @@ func! neuron#refresh_cache(add_titles)
 	endif
 
 	let g:_neuron_cache_add_titles = a:add_titles
-	let l:cmd = g:neuron_executable.' -d "'.g:neuron_dir.'" query --uri z:zettels'
+  let l:cmd = g:neuron_executable.' -d "'.g:neuron_dir.'" query --uri z:zettels'
 	if has('nvim')
 		call jobstart(l:cmd, {
 			\ 'on_stdout': function('s:refresh_cache_callback_nvim'),
@@ -276,13 +276,16 @@ func! neuron#refresh_cache(add_titles)
 	else
 		let l:cmd[2] = shellescape(g:neuron_dir)
 		let l:data = system(join(cmd))
+    echom l:data
 		call s:refresh_cache_callback(l:data)
 	endif
 endf
 
 " vim 8
 func! s:refresh_cache_callback_vim(channel, x)
+  echom "trying to read file..."
 	let l:data = readfile(g:neuron_tmp_filename)
+  echom "file read."
 	call job_start("rm " . g:neuron_tmp_filename)
 	call s:refresh_cache_callback(join(l:data))
 endf
